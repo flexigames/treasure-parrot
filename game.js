@@ -198,6 +198,12 @@ mainState.update = function update () {
     this.bonus = this.addBonus()
   }
 
+  this.bonuses.forEach(bonus => {
+    if(Phaser.Rectangle.intersects(this.player.body, bonus.body)) {
+      bonusCollision(this.player, bonus, this)
+    }
+  })
+
   game.physics.arcade.collide(this.player, this.bonuses, bonusCollision, null, this)
 
   function bonusCreationTimeOutPassed(currentTime, lastCreationTime) {
@@ -220,11 +226,11 @@ function bubbleCollision (player, bubble) {
   this.spawnGold(bubble.position.x, bubble.position.y)
 }
 
-function bonusCollision (player, bonus) {
+function bonusCollision (player, bonus, mainState) {
   bonus.kill()
-  this.bonuses.removeAll(true)
-  this.score += 10
-  this.lastBonusCollectionTime = this.time.time
+  mainState.bonuses.removeAll(true)
+  mainState.score += 10
+  mainState.lastBonusCollectionTime = mainState.time.time
 }
 
 function coinScore (hudCoin, coin) {
