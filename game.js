@@ -30,12 +30,7 @@ mainState.create = function create () {
   this.frontWaves = createWaves(60, 0xeeeeee)
 
   // create player
-  this.player = game.add.sprite(350, 350, 'player')
-  game.physics.arcade.enable(this.player)
-  this.player.body.collideWorldBounds = true
-  this.player.anchor.setTo(0.5, 0.5)
-  this.player.width = 40
-  this.player.height = 40
+  this.player = createPlayer()
 
   // create bonus group
   if (bonusMod) {
@@ -98,6 +93,16 @@ mainState.create = function create () {
     scoreIcon.width = 40
     scoreIcon.height = 40
     return scoreIcon
+  }
+
+  function createPlayer() {
+    player = game.add.sprite(350, 350, 'player')
+    game.physics.arcade.enable(player)
+    player.body.collideWorldBounds = true
+    player.anchor.setTo(0.5, 0.5)
+    player.width = 40
+    player.height = 40
+    return player
   }
 }
 
