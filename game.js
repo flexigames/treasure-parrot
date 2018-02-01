@@ -1,3 +1,5 @@
+const TIME_BETWEEN_BONUS_CREATION = 10000
+
 var game = new Phaser.Game(900, 700, Phaser.AUTO, 'game-div')
 
 var mainState = new Phaser.State()
@@ -46,6 +48,8 @@ mainState.create = function create () {
   this.start()
 
   this.frame = 0
+
+  this.lastBonusCollectionTime = 0
 
   function createWaves (bottomOffset, tint) {
     const tileWidth = 40
@@ -190,12 +194,15 @@ mainState.update = function update () {
 
   game.physics.arcade.collide(this.scoreIcon, this.coins, coinScore, null, this)
 
-  if (this.bonuses.length < 1) {
+  if (this.bonuses.length < 1 && bonusCreationTimeOutPassed(this.time.time, this.lastBonusCollectionTime)) {
     this.bonus = this.addBonus()
-    console.log('bonus created')
   }
 
   game.physics.arcade.collide(this.player, this.bonuses, bonusCollision, null, this)
+
+  function bonusCreationTimeOutPassed(currentTime, lastCreationTime) {
+    return currentTime - lastCreationTime > TIME_BETWEEN_BONUS_CREATION
+  }
 
   function moveWater (water, frame, phase) {
     water.forEach(function (wave) {
@@ -217,6 +224,7 @@ function bonusCollision (player, bonus) {
   bonus.kill()
   this.bonuses.removeAll(true)
   this.score += 10
+  this.lastBonusCollectionTime = this.time.time
 }
 
 function coinScore (hudCoin, coin) {
