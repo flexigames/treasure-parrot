@@ -131,6 +131,8 @@ mainState.addBubble = function addBubble (x, y) {
   newBubble.width = 40
   newBubble.height = 40
   newBubble.body.immovable = true
+  newBubble.sidewaysVelocityOffset = 10 + 40*Math.random()
+  newBubble.sidewaysVelocityPhaseOffset = 240*Math.random()
   return newBubble
 }
 
@@ -155,6 +157,11 @@ mainState.spawnGold = function spawnGold (x, y) {
 
 mainState.update = function update () {
   if (this.gameover) this.start()
+
+  this.bubbles.forEach(bubble => {
+    bubble.body.velocity.x = bubble.sidewaysVelocityOffset*Math.sin((this.frame +  bubble.sidewaysVelocityPhaseOffset) / 120 * Math.PI * 2)
+
+  })
 
   this.frame++
   if (this.frame > 120) this.frame = 0
