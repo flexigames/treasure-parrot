@@ -1,8 +1,5 @@
-/* global Phaser */
-
 var game = new Phaser.Game(900, 700, Phaser.AUTO, 'game-div')
 
-// mainState
 var mainState = new Phaser.State()
 mainState.preload = function preload () {
   game.load.image('player', 'img/parrot.png')
@@ -29,28 +26,21 @@ mainState.create = function create () {
 
   this.bonuses = game.add.physicsGroup()
 
-  // create bubbles
   this.bubbles = game.add.physicsGroup()
   this.bubbles.setAll('outOfBoundsKill', true)
   this.lastBubble = this.addBubble()
 
-  // coin group
   this.coins = game.add.physicsGroup()
 
   this.backWaves = createWaves(40)
 
-  // add controls
   this.cursor = game.input.keyboard.createCursorKeys()
 
-  // physics
   game.physics.startSystem(Phaser.Physics.ARCADE)
-
-  // gameover
 
   this.gameoverLabel = game.add.text(this.game.width / 2 - 50, this.game.height / 2, 'Game Over')
   this.gameoverLabel.visible = false
 
-  // countdown
   this.countdownLabel = game.add.text(this.game.width / 2 - 21, this.game.height / 2 - 100, '3', {fill: '#BC2905', fontSize: '60px'})
   this.countdownLabel.visible = false
 
@@ -195,7 +185,6 @@ mainState.update = function update () {
     }
   }
 
-  // coin score
   game.physics.arcade.collide(this.scoreIcon, this.coins, coinScore, null, this)
 
   if (this.bonuses.length < 1) {
@@ -215,8 +204,6 @@ mainState.update = function update () {
 
 game.state.add('main', mainState)
 game.state.start('main')
-
-// functions
 
 function bubbleCollision (player, bubble) {
   this.player.body.velocity.y = -500
