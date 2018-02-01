@@ -39,8 +39,7 @@ mainState.create = function create () {
 
   game.physics.startSystem(Phaser.Physics.ARCADE)
 
-  this.gameoverLabel = game.add.text(this.game.width / 2 - 50, this.game.height / 2, 'Game Over')
-  this.gameoverLabel.visible = false
+  this.gameoverLabel = createGameoverLabel()
 
   this.countdownLabel = game.add.text(this.game.width / 2 - 21, this.game.height / 2 - 100, '3', {fill: '#BC2905', fontSize: '60px'})
   this.countdownLabel.visible = false
@@ -50,6 +49,13 @@ mainState.create = function create () {
   this.frame = 0
 
   this.lastBonusCollectionTime = 0
+
+  function createGameoverLabel() {
+      const gameoverLabel = game.add.text(game.width / 2 - 50, game.height / 2, 'Game Over')
+      gameoverLabel.visible = false
+
+      return gameoverLabel
+  }
 
   function createWaves (bottomOffset, tint) {
     const tileWidth = 40
