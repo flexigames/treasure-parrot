@@ -26,8 +26,7 @@ mainState.create = function create () {
 
   this.bonuses = game.add.physicsGroup()
 
-  this.bubbles = game.add.physicsGroup()
-  this.bubbles.setAll('outOfBoundsKill', true)
+  this.bubbles = createBubbles()
   this.lastBubble = this.addBubble()
 
   this.coins = game.add.physicsGroup()
@@ -62,16 +61,15 @@ mainState.create = function create () {
     return waterGroup
   }
 
-  function createScoreLabel() {
-    scoreLabel = game.add.text(39, 5, '0', {'fill': '#FFCC00', fontSize: '32px'})
+  function createScoreLabel () {
+    const scoreLabel = game.add.text(39, 5, '0', {'fill': '#FFCC00', fontSize: '32px'})
     scoreLabel.stroke = '#8c7001'
     scoreLabel.strokeThickness = 5
     return scoreLabel
-
   }
 
-  function createScoreIcon() {
-    scoreIcon = game.add.sprite(0, 6, 'hudcoin')
+  function createScoreIcon () {
+    const scoreIcon = game.add.sprite(0, 6, 'hudcoin')
     game.physics.arcade.enable(scoreIcon)
     scoreIcon.body.immovable = true
     scoreIcon.width = 40
@@ -79,8 +77,8 @@ mainState.create = function create () {
     return scoreIcon
   }
 
-  function createPlayer() {
-    player = game.add.sprite(350, 350, 'player')
+  function createPlayer () {
+    const player = game.add.sprite(350, 350, 'player')
     game.physics.arcade.enable(player)
     player.body.collideWorldBounds = true
     player.anchor.setTo(0.5, 0.5)
@@ -89,9 +87,15 @@ mainState.create = function create () {
     return player
   }
 
-  function createBackground() {
+  function createBackground () {
     game.stage.backgroundColor = '#3498db'
     game.add.tileSprite(0, -30, 1024, 1024, 'background')
+  }
+
+  function createBubbles () {
+    const bubbles = game.add.physicsGroup()
+    bubbles.setAll('outOfBoundsKill', true)
+    return bubbles
   }
 }
 
@@ -122,8 +126,7 @@ mainState.addBubble = function addBubble (x, y) {
 
 mainState.addBonus = function addBonus () {
   var random = Math.round(Math.random() * 20)
-  var x = random / 20 * game.
-  width
+  var x = random / 20 * game.width
   var y = 100
   var newBonus = this.bonuses.create(x, y, 'bonus')
   newBonus.width = 40
@@ -194,8 +197,7 @@ mainState.update = function update () {
 
   game.physics.arcade.collide(this.player, this.bonuses, bonusCollision, null, this)
 
-
-  function moveWater(water, frame, phase) {
+  function moveWater (water, frame, phase) {
     water.forEach(function (wave) {
       wave.x += Math.sin((frame + phase) / 120 * Math.PI * 2)
     })
