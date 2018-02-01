@@ -23,16 +23,9 @@ mainState.create = function create () {
   game.stage.backgroundColor = '#3498db'
   game.add.tileSprite(0, -30, 1024, 1024, 'background')
 
-  // score
   this.score = 0
-  this.scoreLabel = game.add.text(39, 5, '0', {'fill': '#FFCC00', fontSize: '32px'})
-  this.scoreLabel.stroke = '#8c7001'
-  this.scoreLabel.strokeThickness = 5
-  this.coinGraphic = game.add.sprite(0, 6, 'hudcoin')
-  game.physics.arcade.enable(this.coinGraphic)
-  this.coinGraphic.body.immovable = true
-  this.coinGraphic.width = 40
-  this.coinGraphic.height = 40
+  this.scoreLabel = createScoreLabel()
+  this.scoreIcon = createScoreIcon()
 
   this.frontWaves = createWaves(60, 0xeeeeee)
 
@@ -88,6 +81,23 @@ mainState.create = function create () {
       if (tint) waveTile.tint = tint
     }
     return waterGroup
+  }
+
+  function createScoreLabel() {
+    scoreLabel = game.add.text(39, 5, '0', {'fill': '#FFCC00', fontSize: '32px'})
+    scoreLabel.stroke = '#8c7001'
+    scoreLabel.strokeThickness = 5
+    return scoreLabel
+
+  }
+
+  function createScoreIcon() {
+    scoreIcon = game.add.sprite(0, 6, 'hudcoin')
+    game.physics.arcade.enable(scoreIcon)
+    scoreIcon.body.immovable = true
+    scoreIcon.width = 40
+    scoreIcon.height = 40
+    return scoreIcon
   }
 }
 
@@ -182,7 +192,7 @@ mainState.update = function update () {
   }
 
   // coin score
-  game.physics.arcade.collide(this.coinGraphic, this.coins, coinScore, null, this)
+  game.physics.arcade.collide(this.scoreIcon, this.coins, coinScore, null, this)
 
   if (bonusMod) {
     // bonus
