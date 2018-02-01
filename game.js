@@ -159,12 +159,8 @@ mainState.update = function update () {
     this.playerWait--
   }
 
-  this.water1.forEach(function (water) {
-    water.x += Math.sin(this.frame / 120 * Math.PI * 2)
-  }.bind(this))
-  this.water2.forEach(function (water) {
-    water.x += Math.sin((this.frame + 60) / 120 * Math.PI * 2)
-  }.bind(this))
+  moveWater(this.water1, this.frame, 0)
+  moveWater(this.water2, this.frame, 60)
 
   this.scoreLabel.text = this.score.toString()
 
@@ -200,6 +196,12 @@ mainState.update = function update () {
 
   // bonus collision
     game.physics.arcade.collide(this.player, this.bonuses, bonusCollision, null, this)
+  }
+
+  function moveWater(water, frame, phase) {
+    water.forEach(function (wave) {
+      wave.x += Math.sin((frame + phase) / 120 * Math.PI * 2)
+    })
   }
 }
 
