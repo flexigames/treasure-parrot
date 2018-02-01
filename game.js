@@ -64,10 +64,12 @@ mainState.create = function create () {
   this.frame = 0
 
   function createWaves (bottomOffset, tint) {
+    const tileWidth = 40
     const waterGroup = game.add.physicsGroup()
-    for (var i = -2; i < 24; i++) {
-      var waveTile = waterGroup.create(i * 40, 700 - bottomOffset, 'water')
-      waveTile.width = 40
+    const numberOfTiles = Math.ceil(game.width / tileWidth) + 1
+    for (var i = -2; i < numberOfTiles; i++) {
+      var waveTile = waterGroup.create(i * tileWidth, 700 - bottomOffset, 'water')
+      waveTile.width = tileWidth
       waveTile.height = 40
       waveTile.body.immovable = true
       if (tint) waveTile.tint = tint
