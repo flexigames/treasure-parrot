@@ -34,15 +34,7 @@ mainState.create = function create () {
   this.coinGraphic.width = 40
   this.coinGraphic.height = 40
 
-  // bottom water
-  this.water1 = game.add.physicsGroup()
-  for (var i = -2; i < 24; i++) {
-    var bottomWater = this.water1.create(i * 40, 700 - 60, 'water')
-    bottomWater.width = 40
-    bottomWater.height = 40
-    bottomWater.body.immovable = true
-    bottomWater.tint = 0xeeeeee
-  }
+  this.frontWaves = createWaves(60, 0xeeeeee)
 
   // create player
   this.player = game.add.sprite(350, 350, 'player')
@@ -65,14 +57,7 @@ mainState.create = function create () {
   // coin group
   this.coins = game.add.physicsGroup()
 
-  // top water
-  this.water2 = game.add.physicsGroup()
-  for (var j = -2; j < 24; j++) {
-    var topWater = this.water2.create(j * 40, 700 - 40, 'water')
-    topWater.width = 40
-    topWater.height = 40
-    topWater.body.immovable = true
-  }
+  this.backWaves = createWaves(40)
 
   // add controls
   this.cursor = game.input.keyboard.createCursorKeys()
@@ -92,6 +77,18 @@ mainState.create = function create () {
   this.start()
 
   this.frame = 0
+
+  function createWaves (bottomOffset, tint) {
+    const waterGroup = game.add.physicsGroup()
+    for (var i = -2; i < 24; i++) {
+      var waveTile = waterGroup.create(i * 40, 700 - bottomOffset, 'water')
+      waveTile.width = 40
+      waveTile.height = 40
+      waveTile.body.immovable = true
+      if (tint) waveTile.tint = tint
+    }
+    return waterGroup
+  }
 }
 
 mainState.start = function start () {
@@ -159,8 +156,8 @@ mainState.update = function update () {
     this.playerWait--
   }
 
-  moveWater(this.water1, this.frame, 0)
-  moveWater(this.water2, this.frame, 60)
+  moveWater(this.frontWaves, this.frame, 0)
+  moveWater(this.backWaves, this.frame, 60)
 
   this.scoreLabel.text = this.score.toString()
 
