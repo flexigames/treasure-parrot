@@ -19,9 +19,7 @@ mainState.preload = function preload () {
 }
 
 mainState.create = function create () {
-  // background
-  game.stage.backgroundColor = '#3498db'
-  game.add.tileSprite(0, -30, 1024, 1024, 'background')
+  createBackground()
 
   this.score = 0
   this.scoreLabel = createScoreLabel()
@@ -29,7 +27,6 @@ mainState.create = function create () {
 
   this.frontWaves = createWaves(60, 0xeeeeee)
 
-  // create player
   this.player = createPlayer()
 
   // create bonus group
@@ -103,6 +100,11 @@ mainState.create = function create () {
     player.width = 40
     player.height = 40
     return player
+  }
+
+  function createBackground() {
+    game.stage.backgroundColor = '#3498db'
+    game.add.tileSprite(0, -30, 1024, 1024, 'background')
   }
 }
 
