@@ -2,7 +2,7 @@
 
 var game = new Phaser.Game(900, 700, Phaser.AUTO, 'game-div')
 
-var bonusMod = false
+var bonusMod = true
 
 // mainState
 var mainState = new Phaser.State()
@@ -121,7 +121,8 @@ mainState.addBubble = function addBubble (x, y) {
 
 mainState.addBonus = function addBonus () {
   var random = Math.round(Math.random() * 20)
-  var x = random / 20 * game.width
+  var x = random / 20 * game.
+  width
   var y = 100
   var newBonus = this.bonuses.create(x, y, 'bonus')
   newBonus.width = 40
