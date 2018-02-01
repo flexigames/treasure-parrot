@@ -2,8 +2,6 @@
 
 var game = new Phaser.Game(900, 700, Phaser.AUTO, 'game-div')
 
-var bonusMod = true
-
 // mainState
 var mainState = new Phaser.State()
 mainState.preload = function preload () {
@@ -29,10 +27,7 @@ mainState.create = function create () {
 
   this.player = createPlayer()
 
-  // create bonus group
-  if (bonusMod) {
-    this.bonuses = game.add.physicsGroup()
-  }
+  this.bonuses = game.add.physicsGroup()
 
   // create bubbles
   this.bubbles = game.add.physicsGroup()
@@ -112,7 +107,7 @@ mainState.create = function create () {
 
 mainState.start = function start () {
   this.bubbles.removeAll(true)
-  if (bonusMod) this.bonuses.removeAll(true)
+  this.bonuses.removeAll(true)
   game.paused = false
   this.player.position.y = game.height / 2
   this.player.position.x = game.width / 2
@@ -203,16 +198,13 @@ mainState.update = function update () {
   // coin score
   game.physics.arcade.collide(this.scoreIcon, this.coins, coinScore, null, this)
 
-  if (bonusMod) {
-    // bonus
-    if (this.bonuses.length < 1) {
-      this.bonus = this.addBonus()
-      console.log('bonus created')
-    }
-
-  // bonus collision
-    game.physics.arcade.collide(this.player, this.bonuses, bonusCollision, null, this)
+  if (this.bonuses.length < 1) {
+    this.bonus = this.addBonus()
+    console.log('bonus created')
   }
+
+  game.physics.arcade.collide(this.player, this.bonuses, bonusCollision, null, this)
+
 
   function moveWater(water, frame, phase) {
     water.forEach(function (wave) {
