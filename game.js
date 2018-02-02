@@ -14,6 +14,7 @@ function createState () {
     bonuses: game.add.physicsGroup(),
     bubbles: createBubbles(),
     coins: game.add.physicsGroup(),
+    droppingCoins: game.add.physicsGroup(),
     backWaves: createWaves(40),
     gameoverLabel: createGameoverLabel(),
     countdownLabel: createCountdownLabel(),
@@ -74,8 +75,7 @@ phaserState.update = function update () {
       const x = bubble.position.x
       const y = bubble.position.y
       bubble.destroy()
-      const gold = spawnGold(x, y)
-      gold.body.gravity.y = 750
+      createDroppingCoin(x, y)
     }
   })
 
@@ -153,7 +153,6 @@ function bubbleCollision (player, bubble) {
   player.body.velocity.y = -500
   bubble.kill()
   const newCoin = spawnGold(bubble.position.x, bubble.position.y)
-  game.physics.arcade.moveToXY(newCoin, 0, 0, 100, 600)
 }
 
 function bonusCollision (bonus) {
@@ -262,10 +261,19 @@ function addBonus () {
   return newBonus
 }
 
+function createDroppingCoin (x, y) {
+  const newCoin = state.droppingCoins.create(x, y, 'coin')
+  newCoin.width = 40
+  newCoin.height = 40
+  newCoin.body.gravity.y = 750
+  return newCoin
+}
+
 function spawnGold (x, y) {
-  var newCoin = state.coins.create(x, y, 'coin')
+  const newCoin = state.coins.create(x, y, 'coin')
   newCoin.width = 40
   newCoin.height = 40
   newCoin.body.gravity.y = 10
+  game.physics.arcade.moveToXY(newCoin, 0, 0, 100, 600)
   return newCoin
 }
