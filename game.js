@@ -257,9 +257,9 @@ function createBubbles () {
 }
 
 function createBubble (x, y) {
-  var random = Math.round(Math.random() * 20)
-  x = x || random / 20 * game.width
-  y = y || 700
+  const sideOffset = 80
+  x = x || (Math.random() * (game.width - sideOffset * 2)) + sideOffset
+  y = y || game.height
   var newBubble = state.bubbles.create(x, y, 'bubble')
   newBubble.checkWorldBounds = true
   newBubble.body.velocity.y = -40
