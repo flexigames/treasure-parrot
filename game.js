@@ -1,4 +1,5 @@
 const TIME_BETWEEN_BONUS_CREATION = 10000
+let HEAVY_BUBBLE_SWING = false
 
 var game = new Phaser.Game(900, 700, Phaser.AUTO, 'game-div')
 
@@ -67,7 +68,7 @@ phaserState.update = function update () {
   if (state.gameover) this.start()
 
   state.bubbles.forEach(bubble => {
-    bubble.body.velocity.x = bubble.sidewaysVelocityOffset * Math.sin((state.frame + bubble.sidewaysVelocityPhaseOffset) / 120 * Math.PI * 2)
+    bubble.body.velocity.x = (bubble.sidewaysVelocityOffset + (HEAVY_BUBBLE_SWING ? 250 : 0)) * Math.sin((state.frame + bubble.sidewaysVelocityPhaseOffset) / 120 * Math.PI * 2)
   })
 
   state.frame++
@@ -110,6 +111,12 @@ phaserState.update = function update () {
     } else {
       state.player.body.velocity.x /= 1.02
     }
+  }
+
+  if(this.cursor.down.isDown) {
+    HEAVY_BUBBLE_SWING = true
+  } else {
+    HEAVY_BUBBLE_SWING = false
   }
 
   game.physics.arcade.collide(state.scoreIcon, state.coins, coinScore, null, state)
