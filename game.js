@@ -10,11 +10,11 @@ function createState () {
     scoreLabel: createScoreLabel(),
     scoreIcon: createScoreIcon(),
     frontWaves: createWaves(60, 0xeeeeee),
+    droppingCoins: game.add.physicsGroup(),
     player: createPlayer(),
     bonuses: game.add.physicsGroup(),
     bubbles: createBubbles(),
     coins: game.add.physicsGroup(),
-    droppingCoins: game.add.physicsGroup(),
     backWaves: createWaves(40),
     gameoverLabel: createGameoverLabel(),
     countdownLabel: createCountdownLabel(),
@@ -133,6 +133,15 @@ phaserState.update = function update () {
     }
   })
 
+  state.droppingCoins.forEach(droppingCoin => {
+    if (Phaser.Rectangle.intersects(state.player.body, droppingCoin.body)) {
+      droppingCoinCollision(droppingCoin)
+    }
+    if (droppingCoin.position.y > game.height) {
+      droppingCoin.destroy()
+    }
+  })
+
   game.physics.arcade.collide(state.player, state.bonuses, bonusCollision, null, state)
 
   function bonusCreationTimeOutPassed (currentTime, lastCreationTime) {
@@ -160,6 +169,11 @@ function bonusCollision (bonus) {
   state.bonuses.removeAll(true)
   state.score += 10
   state.lastBonusCollectionTime = game.time.time
+}
+
+function droppingCoinCollision (coin) {
+  spawnGold(coin.position.x, coin.position.y)
+  coin.destroy()
 }
 
 function coinScore (hudCoin, coin) {
@@ -262,11 +276,12 @@ function addBonus () {
 }
 
 function createDroppingCoin (x, y) {
-  const newCoin = state.droppingCoins.create(x, y, 'coin')
-  newCoin.width = 40
-  newCoin.height = 40
-  newCoin.body.gravity.y = 750
-  return newCoin
+  const coin = state.droppingCoins.create(x, y, 'coin')
+  coin.width = 40
+  coin.height = 40
+  coin.body.setSize(20,20,10,10)
+  coin.body.gravity.y = 750
+  return coin
 }
 
 function spawnGold (x, y) {
