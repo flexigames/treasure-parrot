@@ -174,7 +174,7 @@ function bonusCollision (bonus) {
 
 function droppingCoinCollision (coin) {
   spawnGold(coin.position.x, coin.position.y)
-  coin.kill()
+  coin.destroy()
 }
 
 function bubbleDroppingCoinsCollision(bubble, droppingCoin) {
