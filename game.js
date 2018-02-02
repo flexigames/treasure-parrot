@@ -138,10 +138,11 @@ phaserState.update = function update () {
       droppingCoinCollision(droppingCoin)
     }
     if (droppingCoin.position.y > game.height) {
-      droppingCoin.destroy()
+      droppingCoin.kill()
     }
   })
 
+  game.physics.arcade.collide(state.bubbles, state.droppingCoins, bubbleDroppingCoinsCollision, null, state)
   game.physics.arcade.collide(state.player, state.bonuses, bonusCollision, null, state)
 
   function bonusCreationTimeOutPassed (currentTime, lastCreationTime) {
@@ -173,11 +174,17 @@ function bonusCollision (bonus) {
 
 function droppingCoinCollision (coin) {
   spawnGold(coin.position.x, coin.position.y)
-  coin.destroy()
+  coin.kill()
+}
+
+function bubbleDroppingCoinsCollision(bubble, droppingCoin) {
+  const bubblePosition = bubble.position
+  bubble.kill()
+  createDroppingCoin(bubblePosition.x, bubblePosition.y)
 }
 
 function coinScore (hudCoin, coin) {
-  coin.kill()
+  coin.destroy()
   state.score++
 }
 
