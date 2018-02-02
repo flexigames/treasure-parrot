@@ -161,7 +161,7 @@ game.state.start('main')
 
 function bubbleCollision (player, bubble) {
   player.body.velocity.y = -500
-  bubble.kill()
+  bubble.destroy()
   const newCoin = spawnGold(bubble.position.x, bubble.position.y)
 }
 
