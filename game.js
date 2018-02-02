@@ -89,7 +89,7 @@ phaserState.update = function update () {
 
   if (state.playerWait === 1) state.score = 0
   if (state.playerWait === 0) {
-    state.player.body.gravity.y = 750
+    state.player.body.gravity.y = 0 //750
   } else {
     state.playerWait--
   }
@@ -150,7 +150,8 @@ game.state.start('main')
 function bubbleCollision (player, bubble) {
   player.body.velocity.y = -500
   bubble.kill()
-  spawnGold(bubble.position.x, bubble.position.y)
+  const newCoin = spawnGold(bubble.position.x, bubble.position.y)
+  game.physics.arcade.moveToXY(newCoin, 0, 0, 100, 600)
 }
 
 function bonusCollision (bonus) {
@@ -240,11 +241,10 @@ function createBubble (x, y) {
   var newBubble = state.bubbles.create(x, y, 'bubble')
   newBubble.checkWorldBounds = true
   newBubble.events.onOutOfBounds.add(function() {
-    console.log('out of bounds')
     if(newBubble.position.y < 0) {
       newBubble.kill()
-      state.health -= 1
-      if(state.health < 1) state.gameover = true
+      const gold = spawnGold(newBubble.position.x, newBubble.position.y)
+      gold.body.gravity.y = 750
     }
   }, this);
   newBubble.body.velocity.y = -40
@@ -278,7 +278,6 @@ function spawnGold (x, y) {
   var newCoin = state.coins.create(x, y, 'coin')
   newCoin.width = 40
   newCoin.height = 40
-  game.physics.arcade.moveToXY(newCoin, 0, 0, 100, 600)
   newCoin.body.gravity.y = 10
   return newCoin
 }
