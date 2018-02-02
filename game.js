@@ -20,7 +20,10 @@ function createState () {
     countdownLabel: createCountdownLabel(),
     gameover: false,
     frame: 0,
-    lastBonusCollectionTime: 0
+    lastBonusCollectionTime: 0,
+    audio: {
+      coin: game.add.audio('coin')
+    }
   }
 }
 
@@ -35,6 +38,8 @@ phaserState.preload = function preload () {
   game.load.image('background', 'img/blue_land.png')
   game.load.image('plane', 'img/planeYellow1.png')
   game.load.image('box', 'img/boxCoin_boxed.png')
+
+  game.load.audio('coin', 'audio/coin.mp3');
 }
 
 phaserState.create = function create () {
@@ -47,7 +52,7 @@ phaserState.create = function create () {
 
   game.physics.startSystem(Phaser.Physics.ARCADE)
 
-  this.start()
+  game.sound.setDecodedCallback([ 'coin' ], this.start, this);
 }
 
 phaserState.start = function start () {
@@ -136,6 +141,7 @@ phaserState.update = function update () {
   state.droppingCoins.forEach(droppingCoin => {
     if (Phaser.Rectangle.intersects(state.player.body, droppingCoin.body)) {
       droppingCoinCollision(droppingCoin)
+      state.audio.coin.play()
     }
     if (droppingCoin.position.y > game.height) {
       droppingCoin.kill()
@@ -162,7 +168,8 @@ game.state.start('main')
 function bubbleCollision (player, bubble) {
   player.body.velocity.y = -500
   bubble.destroy()
-  const newCoin = spawnGold(bubble.position.x, bubble.position.y)
+  state.audio.coin.play()
+  spawnGold(bubble.position.x, bubble.position.y)
 }
 
 function bonusCollision (bonus) {
