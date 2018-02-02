@@ -236,7 +236,7 @@ function createBubble (x, y) {
   newBubble.width = 40
   newBubble.height = 40
   newBubble.body.immovable = true
-  newBubble.sidewaysVelocityOffset = 100 + 340 * Math.random()
+  newBubble.sidewaysVelocityOffset = 10 + 100 * Math.random()
   newBubble.sidewaysVelocityPhaseOffset = 240 * Math.random()
   return newBubble
 }
