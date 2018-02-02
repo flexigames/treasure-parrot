@@ -60,6 +60,7 @@ phaserState.start = function start () {
   state.playerWait = 180
   state.gameover = false
   state.gameoverLabel.visible = false
+  state.lastBonusCollectionTime = 0
 }
 
 phaserState.update = function update () {
@@ -119,7 +120,7 @@ phaserState.update = function update () {
 
   state.bonuses.forEach(bonus => {
     if (Phaser.Rectangle.intersects(state.player.body, bonus.body)) {
-      bonusCollision(state.player, bonus, state)
+      bonusCollision(bonus)
     }
   })
 
@@ -140,12 +141,12 @@ game.state.add('main', phaserState)
 game.state.start('main')
 
 function bubbleCollision (player, bubble) {
-  state.player.body.velocity.y = -500
+  player.body.velocity.y = -500
   bubble.kill()
-  spawnGold(state.coins, bubble.position.x, bubble.position.y)
+  spawnGold(bubble.position.x, bubble.position.y)
 }
 
-function bonusCollision (player, bonus, phaserState) {
+function bonusCollision (bonus) {
   bonus.kill()
   state.bonuses.removeAll(true)
   state.score += 10
@@ -243,7 +244,7 @@ function createBubble (x, y) {
 function addBonus () {
   var random = Math.round(Math.random() * 20)
   var x = random / 20 * game.width
-  var y = 500
+  var y = 100
   var newBonus = state.bonuses.create(x, y, 'bonus')
   newBonus.width = 40
   newBonus.height = 40
@@ -251,8 +252,8 @@ function addBonus () {
   return newBonus
 }
 
-function spawnGold (coins, x, y) {
-  var newCoin = coins.create(x, y, 'coin')
+function spawnGold (x, y) {
+  var newCoin = state.coins.create(x, y, 'coin')
   newCoin.width = 40
   newCoin.height = 40
   game.physics.arcade.moveToXY(newCoin, 0, 0, 100, 600)
