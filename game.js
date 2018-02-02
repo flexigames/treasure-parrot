@@ -19,9 +19,7 @@ function createState () {
     countdownLabel: createCountdownLabel(),
     gameover: false,
     frame: 0,
-    lastBonusCollectionTime: 0,
-    healthUi: createHealthUi(),
-    health: 3
+    lastBonusCollectionTime: 0
   }
 }
 
@@ -65,7 +63,6 @@ phaserState.start = function start () {
   state.lastBonusCollectionTime = 0
   state.countdownLabel.text = '3'
   state.player.body.gravity.y = 0
-  state.health = 3
 }
 
 phaserState.update = function update () {
@@ -73,9 +70,14 @@ phaserState.update = function update () {
 
   state.bubbles.forEach(bubble => {
     bubble.body.velocity.x = bubble.sidewaysVelocityOffset * Math.sin((state.frame + bubble.sidewaysVelocityPhaseOffset) / 120 * Math.PI * 2)
+    if(bubble.position.y <= 0) {
+      const x = bubble.position.x
+      const y = bubble.position.y
+      bubble.destroy()
+      const gold = spawnGold(x, y)
+      gold.body.gravity.y = 750
+    }
   })
-
-  state.healthUi.text = state.health.toString()
 
   state.frame++
   if (state.frame > 120) state.frame = 0
@@ -89,7 +91,7 @@ phaserState.update = function update () {
 
   if (state.playerWait === 1) state.score = 0
   if (state.playerWait === 0) {
-    state.player.body.gravity.y = 0 //750
+    state.player.body.gravity.y = 750
   } else {
     state.playerWait--
   }
@@ -240,13 +242,6 @@ function createBubble (x, y) {
   y = y || 700
   var newBubble = state.bubbles.create(x, y, 'bubble')
   newBubble.checkWorldBounds = true
-  newBubble.events.onOutOfBounds.add(function() {
-    if(newBubble.position.y < 0) {
-      newBubble.kill()
-      const gold = spawnGold(newBubble.position.x, newBubble.position.y)
-      gold.body.gravity.y = 750
-    }
-  }, this);
   newBubble.body.velocity.y = -40
   newBubble.width = 40
   newBubble.height = 40
@@ -254,13 +249,6 @@ function createBubble (x, y) {
   newBubble.sidewaysVelocityOffset = 10 + 100 * Math.random()
   newBubble.sidewaysVelocityPhaseOffset = 240 * Math.random()
   return newBubble
-}
-
-function createHealthUi() {
-  const healthUi = game.add.text(game.width - 39, 5, '3', {'fill': '#FF0000', fontSize: '32px'})
-  healthUi.stroke = '#ffffff'
-  healthUi.strokeThickness = 5
-  return healthUi
 }
 
 function addBonus () {
