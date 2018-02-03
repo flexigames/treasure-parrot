@@ -278,9 +278,9 @@ function createBubble (x, y) {
 }
 
 function addBonusGroup () {
-  for (let x = 0; x < 10; x++) {
-    for (let y = 0; y < 5; y++) {
-      addBonus(100 + x * 30, 300 + y * 30)
+  for (let x = 0; x < 26; x++) {
+    for (let y = 0; y < 6; y++) {
+      addBonus(50 + x * 30, 80 + y * 30)
     }
   }
 }
