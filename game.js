@@ -3,6 +3,7 @@ let DEBUG_PLAYER_MOVEMENT = false
 let DEBUG_MOVEMENT_SPEED = 4
 let PLAYER_ROTATION_INTENSITY = 50
 let PLAYER_ROTATION_REDUCTION = 1.002
+let DIFFICULTY_PROGRESSION_START_SCORE = 40
 
 let game = new Phaser.Game(900, 700, Phaser.AUTO, 'game-div')
 
@@ -204,7 +205,7 @@ function createBubble (x, y) {
   newBubble.width = 40
   newBubble.height = 40
   newBubble.body.immovable = true
-  newBubble.sidewaysVelocityOffset = 10 + 100 * Math.random()
+  newBubble.sidewaysVelocityOffset =  Math.sqrt(30 * Math.max(state.score - DIFFICULTY_PROGRESSION_START_SCORE, 0)) + 70 * Math.random()
   newBubble.sidewaysVelocityPhaseOffset = 240 * Math.random()
   return newBubble
 }
