@@ -28,6 +28,8 @@ phaserState.preload = function preload () {
     game.load.image('plane', 'img/planeYellow1.png')
     game.load.image('box', 'img/boxCoin_boxed.png')
     game.load.image('spikes', 'img/spikes.png')
+    game.load.image('cloud', 'img/cloud6.png')
+    game.load.image('cloud2', 'img/cloud2.png')
   }
 
   function loadAudio() {
@@ -58,6 +60,7 @@ phaserState.create = function create () {
 
   function createState () {
     return {
+      clouds: createClouds(),
       highscore: localStorage.getItem('highscore') || 0,
       score: 0,
       scoreLabel: createScoreLabel(),
@@ -113,6 +116,22 @@ phaserState.create = function create () {
       )
       highscoreLabel.visible = false
       return highscoreLabel
+    }
+
+    function createClouds () {
+      const clouds = game.add.physicsGroup()
+      createCloud(clouds, 'cloud', 0)
+      createCloud(clouds, 'cloud2', -800)
+    }
+
+    function createCloud (clouds, sprite, startPosition) {
+      const cloud = clouds.create(startPosition - 400, 50 + 130 * Math.random(), sprite)
+      cloud.alpha = 0.4
+      cloud.body.velocity.x = 50
+      cloud.checkWorldBounds = true
+      cloud.events.onOutOfBounds.add(cloud => {
+        if (cloud.position.x > 0) cloud.position.x = startPosition * Math.random() - 400
+      })
     }
 
     function createWaves (bottomOffset, tint) {
