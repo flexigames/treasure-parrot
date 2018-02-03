@@ -1,4 +1,4 @@
-let BONUS_CREATION_THRESHOLD = 30
+let BONUS_CREATION_THRESHOLD = 20
 let DEBUG_PLAYER_MOVEMENT = false
 let DEBUG_MOVEMENT_SPEED = 4
 let PLAYER_ROTATION_INTENSITY = 50
@@ -319,7 +319,7 @@ function updateBonuses() {
   function createBonus () {
     const random = Math.round(Math.random() * 20)
     const x = random / 20 * game.width
-    const y = 100 + 500 * Math.random()
+    const y = 120 + 80 * Math.random()
     let newBonus = state.bonuses.create(x, y, 'bonus')
     newBonus.width = 40
     newBonus.height = 40
