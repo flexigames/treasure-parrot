@@ -1,5 +1,5 @@
 const TIME_BETWEEN_BONUS_CREATION = 10000
-let DEBUG_PLAYER_MOVEMENT = true
+let DEBUG_PLAYER_MOVEMENT = false
 let DEBUG_MOVEMENT_SPEED = 4
 
 let game = new Phaser.Game(900, 700, Phaser.AUTO, 'game-div')
