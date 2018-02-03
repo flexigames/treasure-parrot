@@ -205,7 +205,7 @@ function createBubble (x, y) {
   let newBubble = state.bubbles.create(x, y, 'bubbleWithAnimation')
   let burstAnimation = newBubble.animations.add('burst')
   newBubble.checkWorldBounds = true
-  newBubble.body.velocity.y = -40
+  newBubble.body.velocity.y = -42
   newBubble.width = 40
   newBubble.height = 40
   newBubble.body.immovable = true
@@ -302,7 +302,7 @@ function updateBonuses() {
   })
 
   if (state.bonuses.length < 1 && bonusCreationScoreTimeOutPassed(state.score, state.lastBonusCollectionScore) && state.score > BONUS_CREATION_THRESHOLD) {
-    state.bonus = addBonus()
+    state.bonus = createBonus ()
   }
 
   function bonusCollision (bonus) {
@@ -316,10 +316,10 @@ function updateBonuses() {
     state.bonuses.removeAll(true)
   }
 
-  function addBonus () {
+  function createBonus () {
     const random = Math.round(Math.random() * 20)
     const x = random / 20 * game.width
-    const y = 100
+    const y = 100 + 500 * Math.random()
     let newBonus = state.bonuses.create(x, y, 'bonus')
     newBonus.width = 40
     newBonus.height = 40
