@@ -29,7 +29,7 @@ phaserState.preload = function preload () {
     game.load.image('box', 'img/boxCoin_boxed.png')
     game.load.image('spikes', 'img/spikes.png')
     game.load.image('cloud', 'img/cloud6.png')
-    game.load.image('cloud2', 'img/cloud2.png')
+    game.load.image('cloud2', 'img/cloud1.png')
   }
 
   function loadAudio() {
