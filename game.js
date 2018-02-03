@@ -33,6 +33,8 @@ phaserState.preload = function preload () {
 }
 
 phaserState.create = function create () {
+  // game.world.setBounds(0,0,2000,2000)
+
   createBackground()
 
   state = createState()
@@ -153,7 +155,7 @@ phaserState.start = function start () {
   state.gameoverLabel.visible = false
 
   state.countdownLabel.text = '3'
-  
+
   state.lastBonusCollectionTime = 0
 }
 
@@ -189,6 +191,7 @@ phaserState.update = function update () {
       if (!DEBUG_PLAYER_MOVEMENT) player.body.velocity.y = -500
       bubble.destroy()
       state.audio.bubble.play()
+      game.camera.shake(0.005, 40, true, Phaser.Camera.SHAKE_VERTICAL, true)
       spawnGold(bubble.position.x, bubble.position.y)
     }
 
