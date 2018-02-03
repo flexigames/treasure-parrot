@@ -1,6 +1,6 @@
 const TIME_BETWEEN_BONUS_CREATION = 10000
-const DEBUG_PLAYER_MOVEMENT = false
-const DEBUG_MOVEMENT_SPEED = 10
+let DEBUG_PLAYER_MOVEMENT = false
+let DEBUG_MOVEMENT_SPEED = 4
 
 var game = new Phaser.Game(900, 700, Phaser.AUTO, 'game-div')
 
@@ -180,6 +180,8 @@ phaserState.update = function update () {
         if (cursor.down.isDown) {
           state.player.body.position.y += DEBUG_MOVEMENT_SPEED
         }
+        state.player.body.velocity.x = 0
+        state.player.body.velocity.y = 0
       } else {
         if (cursor.left.isDown) {
           state.player.body.velocity.x -= (state.player.body.velocity.x + 400) / 15
