@@ -5,6 +5,7 @@ const DEBUG_MOVEMENT_SPEED = 10
 var game = new Phaser.Game(900, 700, Phaser.AUTO, 'game-div')
 
 let state
+let cursor
 
 function createState () {
   return {
@@ -52,7 +53,7 @@ phaserState.create = function create () {
   state = createState()
   state.lastBubble = createBubble()
 
-  this.cursor = game.input.keyboard.createCursorKeys()
+  cursor = game.input.keyboard.createCursorKeys()
 
   game.physics.startSystem(Phaser.Physics.ARCADE)
 
@@ -136,7 +137,7 @@ phaserState.update = function update () {
 
   handleBubbles()
 
-  handlePlayerMovement(this.cursor)
+  handlePlayerMovement()
 
   function handleBubbles() {
     state.bubbles.forEach(bubble => {
@@ -160,7 +161,7 @@ phaserState.update = function update () {
     })
   }
 
-  function handlePlayerMovement(cursor) {
+  function handlePlayerMovement() {
     if (state.playerWait === 0) {
       if (DEBUG_PLAYER_MOVEMENT) {
         if (cursor.left.isDown) {
