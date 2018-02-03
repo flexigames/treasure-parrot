@@ -176,198 +176,6 @@ phaserState.update = function update () {
 
   handlePlayerMovement()
 
-  function handleGameover(start) {
-    if (state.player.position.y > 670) state.gameover = true
-    if (state.gameover) start()
-  }
-
-  function incrementFrame() {
-    state.frame++
-    if (state.frame > 120) state.frame = 0
-  }
-
-  function handleCollisions() {
-    game.physics.arcade.collide(state.scoreIcon, state.coins, coinScoreCollision, null, state)
-    game.physics.arcade.collide(state.bubbles, state.droppingCoins, bubbleDroppingCoinsCollision, null, state)
-
-    function bubbleDroppingCoinsCollision(bubble, droppingCoin) {
-      const bubblePosition = bubble.position
-      state.audio.bubble.play()
-      bubble.kill()
-      createDroppingCoin(bubblePosition.x, bubblePosition.y)
-    }
-
-    function coinScoreCollision (hudCoin, coin) {
-      coin.destroy()
-      state.audio.coin.play('', 0, 0.4)
-      state.score++
-    }
-  }
-
-  function updateGameObjects() {
-    moveWater(state.frontWaves, state.frame, 0)
-    moveWater(state.backWaves, state.frame, 60)
-
-    updateScore()
-    updateBonuses()
-    updateDroppingCoins()
-    updateBubbles()
-  }
-
-  function updateBonuses() {
-    state.bonuses.forEach(bonus => {
-      if (Phaser.Rectangle.intersects(state.player.body, bonus.body)) {
-        bonusCollision(bonus)
-      }
-    })
-
-    if (state.bonuses.length < 1 && bonusCreationTimeOutPassed(game.time.time, state.lastBonusCollectionTime)) {
-      state.bonus = addBonus()
-    }
-
-    function bonusCollision (bonus) {
-      bonus.kill()
-      state.bonuses.removeAll(true)
-      state.score += 10
-      state.lastBonusCollectionTime = game.time.time
-    }
-
-    function addBonus () {
-      const random = Math.round(Math.random() * 20)
-      const x = random / 20 * game.width
-      const y = 100
-      let newBonus = state.bonuses.create(x, y, 'bonus')
-      newBonus.width = 40
-      newBonus.height = 40
-      newBonus.body.immovable = true
-      return newBonus
-    }
-  }
-
-  function updateScore() {
-    state.scoreLabel.text = state.score.toString()
-  }
-
-  function handleCountdownProcess() {
-    state.countdownLabel.visible = state.playerWait > 0
-    if (state.playerWait === 170) createBubble(state.player.x, 700)
-    if (state.playerWait <= 180 - 60) {
-      state.countdownLabel.text = '2'
-    }
-    if (state.playerWait <= 180 - 120) state.countdownLabel.text = '1'
-
-    if (state.playerWait === 1) state.score = 0
-    if (state.playerWait === 0) {
-      if(!DEBUG_PLAYER_MOVEMENT) state.player.body.gravity.y = 750
-    } else {
-      state.playerWait--
-    }
-  }
-
-  function updateDroppingCoins() {
-    state.droppingCoins.forEach(droppingCoin => {
-      if (Phaser.Rectangle.intersects(state.player.body, droppingCoin.body)) {
-        droppingCoinCollision(droppingCoin)
-      }
-
-      if (droppingCoin.position.y > game.height - 20 && !droppingCoin.inWater) {
-        state.audio.waterDrop.play()
-        droppingCoin.inWater = true
-      }
-
-      if (droppingCoin.position.y > game.height) {
-        droppingCoin.kill()
-      }
-    })
-
-    function droppingCoinCollision (coin) {
-      spawnGold(coin.position.x, coin.position.y)
-      state.audio.coin.play()
-      coin.destroy()
-    }
-  }
-
-  function updateBubbles() {
-    state.bubbles.forEach(bubble => {
-      bubble.body.velocity.x = bubble.sidewaysVelocityOffset * Math.sin((state.frame + bubble.sidewaysVelocityPhaseOffset) / 120 * Math.PI * 2)
-      if (Phaser.Rectangle.intersects(state.player.body, bubble.body)) {
-        bubbleCollision(bubble)
-      }
-      
-      if(bubble.position.y <= 0) {
-        const x = bubble.position.x
-        const y = bubble.position.y
-        bubble.destroy()
-        createDroppingCoin(x, y)
-      }
-
-      function bubbleCollision (bubble) {
-        if (!DEBUG_PLAYER_MOVEMENT) state.player.body.velocity.y = -500
-        bubble.destroy()
-        state.audio.bubble.play()
-        spawnGold(bubble.position.x, bubble.position.y)
-      }
-    })
-
-    if (!state.lastBubble.alive || state.lastBubble.y < 660) { state.lastBubble = createBubble() }
-  }
-
-  function bonusCreationTimeOutPassed (currentTime, lastCreationTime) {
-    return currentTime - lastCreationTime > TIME_BETWEEN_BONUS_CREATION
-  }
-
-  function moveWater (water, frame, phase) {
-    water.forEach(function (wave) {
-      wave.x += Math.sin((frame + phase) / 120 * Math.PI * 2)
-    })
-  }
-
-  function handlePlayerMovement() {
-    if (state.playerWait === 0) {
-      if (DEBUG_PLAYER_MOVEMENT) {
-        if (cursor.left.isDown) {
-          state.player.body.position.x -= DEBUG_MOVEMENT_SPEED
-        }
-        if (cursor.right.isDown) {
-          state.player.body.position.x += DEBUG_MOVEMENT_SPEED
-        }
-        if (cursor.up.isDown) {
-          state.player.body.position.y -= DEBUG_MOVEMENT_SPEED
-        }
-        if (cursor.down.isDown) {
-          state.player.body.position.y += DEBUG_MOVEMENT_SPEED
-        }
-        state.player.body.velocity.x = 0
-        state.player.body.velocity.y = 0
-      } else {
-        if (cursor.left.isDown) {
-          state.player.body.velocity.x -= (state.player.body.velocity.x + 400) / 15
-        } else if (cursor.right.isDown) {
-          state.player.body.velocity.x += (400 - state.player.body.velocity.x) / 15
-        } else {
-          state.player.body.velocity.x /= 1.02
-        }
-      }
-    }
-  }
-
-  function createDroppingCoin (x, y) {
-    const coin = state.droppingCoins.create(x, y, 'coin')
-    coin.width = 40
-    coin.height = 40
-    coin.body.setSize(26,26,7,7)
-    coin.body.gravity.y = 750
-    return coin
-  }
-
-  function spawnGold (x, y) {
-    const newCoin = state.coins.create(x, y, 'coin')
-    newCoin.width = 40
-    newCoin.height = 40
-    newCoin.body.gravity.y = 10
-    game.physics.arcade.moveToXY(newCoin, 0, 0, 100, 600)
-    return newCoin
-  }
 }
 
 game.state.add('main', phaserState)
@@ -386,4 +194,197 @@ function createBubble (x, y) {
   newBubble.sidewaysVelocityOffset = 10 + 100 * Math.random()
   newBubble.sidewaysVelocityPhaseOffset = 240 * Math.random()
   return newBubble
+}
+
+function handleGameover(start) {
+  if (state.player.position.y > 670) state.gameover = true
+  if (state.gameover) start()
+}
+
+function incrementFrame() {
+  state.frame++
+  if (state.frame > 120) state.frame = 0
+}
+
+function handleCollisions() {
+  game.physics.arcade.collide(state.scoreIcon, state.coins, coinScoreCollision, null, state)
+  game.physics.arcade.collide(state.bubbles, state.droppingCoins, bubbleDroppingCoinsCollision, null, state)
+
+  function bubbleDroppingCoinsCollision(bubble, droppingCoin) {
+    const bubblePosition = bubble.position
+    state.audio.bubble.play()
+    bubble.kill()
+    createDroppingCoin(bubblePosition.x, bubblePosition.y)
+  }
+
+  function coinScoreCollision (hudCoin, coin) {
+    coin.destroy()
+    state.audio.coin.play('', 0, 0.4)
+    state.score++
+  }
+}
+
+function updateGameObjects() {
+  moveWater(state.frontWaves, state.frame, 0)
+  moveWater(state.backWaves, state.frame, 60)
+
+  updateScore()
+  updateBonuses()
+  updateDroppingCoins()
+  updateBubbles()
+}
+
+function updateBonuses() {
+  state.bonuses.forEach(bonus => {
+    if (Phaser.Rectangle.intersects(state.player.body, bonus.body)) {
+      bonusCollision(bonus)
+    }
+  })
+
+  if (state.bonuses.length < 1 && bonusCreationTimeOutPassed(game.time.time, state.lastBonusCollectionTime)) {
+    state.bonus = addBonus()
+  }
+
+  function bonusCollision (bonus) {
+    bonus.kill()
+    state.bonuses.removeAll(true)
+    state.score += 10
+    state.lastBonusCollectionTime = game.time.time
+  }
+
+  function addBonus () {
+    const random = Math.round(Math.random() * 20)
+    const x = random / 20 * game.width
+    const y = 100
+    let newBonus = state.bonuses.create(x, y, 'bonus')
+    newBonus.width = 40
+    newBonus.height = 40
+    newBonus.body.immovable = true
+    return newBonus
+  }
+}
+
+function updateScore() {
+  state.scoreLabel.text = state.score.toString()
+}
+
+function handleCountdownProcess() {
+  state.countdownLabel.visible = state.playerWait > 0
+  if (state.playerWait === 170) createBubble(state.player.x, 700)
+  if (state.playerWait <= 180 - 60) {
+    state.countdownLabel.text = '2'
+  }
+  if (state.playerWait <= 180 - 120) state.countdownLabel.text = '1'
+
+  if (state.playerWait === 1) state.score = 0
+  if (state.playerWait === 0) {
+    if(!DEBUG_PLAYER_MOVEMENT) state.player.body.gravity.y = 750
+  } else {
+    state.playerWait--
+  }
+}
+
+function updateDroppingCoins() {
+  state.droppingCoins.forEach(droppingCoin => {
+    if (Phaser.Rectangle.intersects(state.player.body, droppingCoin.body)) {
+      droppingCoinCollision(droppingCoin)
+    }
+
+    if (droppingCoin.position.y > game.height - 20 && !droppingCoin.inWater) {
+      state.audio.waterDrop.play()
+      droppingCoin.inWater = true
+    }
+
+    if (droppingCoin.position.y > game.height) {
+      droppingCoin.destroy()
+    }
+  })
+
+  function droppingCoinCollision (coin) {
+    spawnGold(coin.position.x, coin.position.y)
+    state.audio.coin.play()
+    coin.destroy()
+  }
+}
+
+function updateBubbles() {
+  state.bubbles.forEach(bubble => {
+    bubble.body.velocity.x = bubble.sidewaysVelocityOffset * Math.sin((state.frame + bubble.sidewaysVelocityPhaseOffset) / 120 * Math.PI * 2)
+    if (Phaser.Rectangle.intersects(state.player.body, bubble.body)) {
+      bubbleCollision(bubble)
+    }
+
+    if(bubble.position.y <= 0) {
+      const x = bubble.position.x
+      const y = bubble.position.y
+      bubble.destroy()
+      createDroppingCoin(x, y)
+    }
+
+    function bubbleCollision (bubble) {
+      if (!DEBUG_PLAYER_MOVEMENT) state.player.body.velocity.y = -500
+      bubble.destroy()
+      state.audio.bubble.play()
+      spawnGold(bubble.position.x, bubble.position.y)
+    }
+  })
+
+  if (!state.lastBubble.alive || state.lastBubble.y < 660) { state.lastBubble = createBubble() }
+}
+
+function bonusCreationTimeOutPassed (currentTime, lastCreationTime) {
+  return currentTime - lastCreationTime > TIME_BETWEEN_BONUS_CREATION
+}
+
+function moveWater (water, frame, phase) {
+  water.forEach(function (wave) {
+    wave.x += Math.sin((frame + phase) / 120 * Math.PI * 2)
+  })
+}
+
+function handlePlayerMovement() {
+  if (state.playerWait === 0) {
+    if (DEBUG_PLAYER_MOVEMENT) {
+      if (cursor.left.isDown) {
+        state.player.body.position.x -= DEBUG_MOVEMENT_SPEED
+      }
+      if (cursor.right.isDown) {
+        state.player.body.position.x += DEBUG_MOVEMENT_SPEED
+      }
+      if (cursor.up.isDown) {
+        state.player.body.position.y -= DEBUG_MOVEMENT_SPEED
+      }
+      if (cursor.down.isDown) {
+        state.player.body.position.y += DEBUG_MOVEMENT_SPEED
+      }
+      state.player.body.velocity.x = 0
+      state.player.body.velocity.y = 0
+    } else {
+      if (cursor.left.isDown) {
+        state.player.body.velocity.x -= (state.player.body.velocity.x + 400) / 15
+      } else if (cursor.right.isDown) {
+        state.player.body.velocity.x += (400 - state.player.body.velocity.x) / 15
+      } else {
+        state.player.body.velocity.x /= 1.02
+      }
+    }
+  }
+}
+
+function createDroppingCoin (x, y) {
+  const coin = state.droppingCoins.create(x, y, 'coin')
+  coin.width = 40
+  coin.height = 40
+  coin.body.setSize(26,26,7,7)
+  coin.body.gravity.y = 750
+  return coin
+}
+
+function spawnGold (x, y) {
+  const newCoin = state.coins.create(x, y, 'coin')
+  newCoin.width = 40
+  newCoin.height = 40
+  newCoin.body.gravity.y = 10
+  game.physics.arcade.moveToXY(newCoin, 0, 0, 100, 600)
+  return newCoin
 }
