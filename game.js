@@ -1,4 +1,6 @@
 const TIME_BETWEEN_BONUS_CREATION = 10000
+const DEBUG_PLAYER_MOVEMENT = true
+const DEBUG_MOVEMENT_SPEED = 10
 
 var game = new Phaser.Game(900, 700, Phaser.AUTO, 'game-div')
 
@@ -98,7 +100,7 @@ phaserState.update = function update () {
 
   if (state.playerWait === 1) state.score = 0
   if (state.playerWait === 0) {
-    state.player.body.gravity.y = 750
+    if(!DEBUG_PLAYER_MOVEMENT) state.player.body.gravity.y = 750
   } else {
     state.playerWait--
   }
@@ -117,16 +119,6 @@ phaserState.update = function update () {
   }
 
   if (!state.lastBubble.alive || state.lastBubble.y < 660) { state.lastBubble = createBubble() }
-
-  if (state.playerWait === 0) {
-    if (this.cursor.left.isDown) {
-      state.player.body.velocity.x -= (state.player.body.velocity.x + 400) / 15
-    } else if (this.cursor.right.isDown) {
-      state.player.body.velocity.x += (400 - state.player.body.velocity.x) / 15
-    } else {
-      state.player.body.velocity.x /= 1.02
-    }
-  }
 
   game.physics.arcade.collide(state.scoreIcon, state.coins, coinScore, null, state)
 
@@ -152,6 +144,8 @@ phaserState.update = function update () {
   game.physics.arcade.collide(state.bubbles, state.droppingCoins, bubbleDroppingCoinsCollision, null, state)
   game.physics.arcade.collide(state.player, state.bonuses, bonusCollision, null, state)
 
+  handlePlayerMovement(this.cursor)
+
   function bonusCreationTimeOutPassed (currentTime, lastCreationTime) {
     return currentTime - lastCreationTime > TIME_BETWEEN_BONUS_CREATION
   }
@@ -161,13 +155,40 @@ phaserState.update = function update () {
       wave.x += Math.sin((frame + phase) / 120 * Math.PI * 2)
     })
   }
+
+  function handlePlayerMovement(cursor) {
+    if (state.playerWait === 0) {
+      if (DEBUG_PLAYER_MOVEMENT) {
+        if (cursor.left.isDown) {
+          state.player.body.position.x -= DEBUG_MOVEMENT_SPEED
+        }
+        if (cursor.right.isDown) {
+          state.player.body.position.x += DEBUG_MOVEMENT_SPEED
+        }
+        if (cursor.up.isDown) {
+          state.player.body.position.y -= DEBUG_MOVEMENT_SPEED
+        }
+        if (cursor.down.isDown) {
+          state.player.body.position.y += DEBUG_MOVEMENT_SPEED
+        }
+      } else {
+        if (cursor.left.isDown) {
+          state.player.body.velocity.x -= (state.player.body.velocity.x + 400) / 15
+        } else if (cursor.right.isDown) {
+          state.player.body.velocity.x += (400 - state.player.body.velocity.x) / 15
+        } else {
+          state.player.body.velocity.x /= 1.02
+        }
+      }
+    }
+  }
 }
 
 game.state.add('main', phaserState)
 game.state.start('main')
 
 function bubbleCollision (player, bubble) {
-  player.body.velocity.y = -500
+  if (!DEBUG_PLAYER_MOVEMENT) player.body.velocity.y = -500
   bubble.destroy()
   state.audio.bubble.play()
   spawnGold(bubble.position.x, bubble.position.y)
