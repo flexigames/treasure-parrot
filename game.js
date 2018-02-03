@@ -15,7 +15,7 @@ phaserState.preload = function preload () {
 
   function loadImages() {
     game.load.image('player', 'img/parrot.png')
-    game.load.image('bonus', 'img/boxItem.png')
+    game.load.image('bonus', 'img/boxCoin.png')
     game.load.image('bubble', 'img/bubble4.png')
     game.load.spritesheet('bubbleWithAnimation', 'img/bubbleWithAnimation.png', 40, 40, 3, 0, 0)
     game.load.image('water', 'img/waterTop_low.png')
@@ -277,6 +277,11 @@ function updateBonuses() {
   }
 
   function bonusCollision (bonus) {
+    for (let i = 0; i < 10; i++) {
+      const coin = createDroppingCoin(bonus.position.x, bonus.position.y)
+      coin.body.velocity.y = -400
+      coin.body.velocity.x = (100 * Math.random()) - 50
+    }
     bonus.kill()
     state.bonuses.removeAll(true)
     state.score += 10
