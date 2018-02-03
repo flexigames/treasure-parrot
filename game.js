@@ -338,7 +338,7 @@ phaserState.update = function update () {
     const coin = state.droppingCoins.create(x, y, 'coin')
     coin.width = 40
     coin.height = 40
-    coin.body.setSize(20,20,10,10)
+    coin.body.setSize(26,26,7,7)
     coin.body.gravity.y = 750
     return coin
   }
