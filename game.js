@@ -139,8 +139,7 @@ phaserState.create = function create () {
 }
 
 phaserState.start = function start () {
-  state.bubbles.removeAll(true)
-  state.bonuses.removeAll(true)
+  removeGameObjects()
 
   state.player.position.y = game.height / 2
   state.player.position.x = game.width / 2
@@ -153,8 +152,15 @@ phaserState.start = function start () {
   state.gameoverLabel.visible = false
 
   state.countdownLabel.text = '3'
-  
+
   state.lastBonusCollectionTime = 0
+
+  function removeGameObjects() {
+    state.bubbles.removeAll(true)
+    state.bonuses.removeAll(true)
+    state.coins.removeAll(true)
+    state.droppingCoins.removeAll(true)
+  }
 }
 
 phaserState.update = function update () {
