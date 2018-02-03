@@ -31,7 +31,7 @@ function createState () {
 var phaserState = new Phaser.State()
 phaserState.preload = function preload () {
   game.load.image('player', 'img/parrot.png')
-  game.load.image('bonus', 'img/boxItem.png')
+  game.load.image('bonus', 'img/coinGold.png')
   game.load.image('bubble', 'img/bubble4.png')
   game.load.image('water', 'img/waterTop_low.png')
   game.load.image('coin', 'img/coinGold.png')
@@ -60,6 +60,7 @@ phaserState.create = function create () {
 phaserState.start = function start () {
   state.bubbles.removeAll(true)
   state.bonuses.removeAll(true)
+  addBonusGroup()
   game.paused = false
   state.player.position.y = game.height / 2
   state.player.position.x = game.width / 2
@@ -130,10 +131,6 @@ phaserState.update = function update () {
 
   game.physics.arcade.collide(state.scoreIcon, state.coins, coinScore, null, state)
 
-  if (state.bonuses.length < 1 && bonusCreationTimeOutPassed(game.time.time, state.lastBonusCollectionTime)) {
-    state.bonus = addBonus()
-  }
-
   state.bonuses.forEach(bonus => {
     if (Phaser.Rectangle.intersects(state.player.body, bonus.body)) {
       bonusCollision(bonus)
@@ -150,7 +147,6 @@ phaserState.update = function update () {
   })
 
   game.physics.arcade.collide(state.bubbles, state.droppingCoins, bubbleDroppingCoinsCollision, null, state)
-  game.physics.arcade.collide(state.player, state.bonuses, bonusCollision, null, state)
 
   function bonusCreationTimeOutPassed (currentTime, lastCreationTime) {
     return currentTime - lastCreationTime > TIME_BETWEEN_BONUS_CREATION
@@ -174,10 +170,9 @@ function bubbleCollision (player, bubble) {
 }
 
 function bonusCollision (bonus) {
-  bonus.kill()
-  state.bonuses.removeAll(true)
-  state.score += 10
-  state.lastBonusCollectionTime = game.time.time
+  state.audio.coin.play()
+  spawnGold(bonus.position.x, bonus.position.y)
+  bonus.destroy()
 }
 
 function droppingCoinCollision (coin) {
@@ -282,10 +277,18 @@ function createBubble (x, y) {
   return newBubble
 }
 
-function addBonus () {
+function addBonusGroup () {
+  for (let x = 0; x < 10; x++) {
+    for (let y = 0; y < 5; y++) {
+      addBonus(100 + x * 30, 300 + y * 30)
+    }
+  }
+}
+
+function addBonus (x, y) {
   var random = Math.round(Math.random() * 20)
-  var x = random / 20 * game.width
-  var y = 100
+  var x = x || random / 20 * game.width
+  var y = y || 100
   var newBonus = state.bonuses.create(x, y, 'bonus')
   newBonus.width = 40
   newBonus.height = 40
