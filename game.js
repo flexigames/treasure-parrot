@@ -1,6 +1,8 @@
 const TIME_BETWEEN_BONUS_CREATION = 10000
 let DEBUG_PLAYER_MOVEMENT = false
 let DEBUG_MOVEMENT_SPEED = 4
+let PLAYER_ROTATION_INTENSITY = 50
+let PLAYER_ROTATION_REDUCTION = 1.002
 
 let game = new Phaser.Game(900, 700, Phaser.AUTO, 'game-div')
 
@@ -83,6 +85,7 @@ phaserState.create = function create () {
       player.anchor.setTo(0.5, 0.5)
       player.width = 40
       player.height = 40
+      player.customRotation = 0
       return player
     }
 
@@ -144,11 +147,13 @@ phaserState.create = function create () {
 phaserState.start = function start () {
   removeGameObjects()
 
+  state.player.customRotation = 0
   state.player.position.y = game.height / 2
   state.player.position.x = game.width / 2
   state.player.body.velocity.x = 0
   state.player.body.velocity.y = 0
   state.player.body.gravity.y = 0
+  state.player.angle = 0
   state.playerWait = 180
 
   state.gameover = false
@@ -243,6 +248,7 @@ function updateBubbles() {
   state.bubbles.forEachAlive(bubble => {
     bubble.body.velocity.x = bubble.sidewaysVelocityOffset * Math.sin((state.frame + bubble.sidewaysVelocityPhaseOffset) / 120 * Math.PI * 2)
     if (!bubble.isPopped && Phaser.Rectangle.intersects(state.player.body, bubble.body)) {
+      state.player.customRotation += state.player.body.velocity.x / PLAYER_ROTATION_INTENSITY
       bubbleCollision(bubble)
     }
 
@@ -354,6 +360,8 @@ function moveWater (water, frame, phase) {
 }
 
 function handlePlayerMovement() {
+  state.player.angle += state.player.customRotation
+  state.player.customRotation /= PLAYER_ROTATION_REDUCTION
   if (state.playerWait === 0) {
     if (DEBUG_PLAYER_MOVEMENT) {
       if (cursor.left.isDown) {
