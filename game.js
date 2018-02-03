@@ -199,7 +199,7 @@ phaserState.update = function update () {
 
     function coinScoreCollision (hudCoin, coin) {
       coin.destroy()
-      state.audio.coin.play()
+      state.audio.coin.play('', 0, 0.4)
       state.score++
     }
   }
