@@ -1,5 +1,5 @@
 const TIME_BETWEEN_BONUS_CREATION = 10000
-const DEBUG_PLAYER_MOVEMENT = true
+const DEBUG_PLAYER_MOVEMENT = false
 const DEBUG_MOVEMENT_SPEED = 10
 
 var game = new Phaser.Game(900, 700, Phaser.AUTO, 'game-div')
@@ -78,16 +78,6 @@ phaserState.start = function start () {
 phaserState.update = function update () {
   if (state.gameover) this.start()
 
-  state.bubbles.forEach(bubble => {
-    bubble.body.velocity.x = bubble.sidewaysVelocityOffset * Math.sin((state.frame + bubble.sidewaysVelocityPhaseOffset) / 120 * Math.PI * 2)
-    if(bubble.position.y <= 0) {
-      const x = bubble.position.x
-      const y = bubble.position.y
-      bubble.destroy()
-      createDroppingCoin(x, y)
-    }
-  })
-
   state.frame++
   if (state.frame > 120) state.frame = 0
 
@@ -144,7 +134,21 @@ phaserState.update = function update () {
   game.physics.arcade.collide(state.bubbles, state.droppingCoins, bubbleDroppingCoinsCollision, null, state)
   game.physics.arcade.collide(state.player, state.bonuses, bonusCollision, null, state)
 
+  handleBubbles()
+
   handlePlayerMovement(this.cursor)
+
+  function handleBubbles() {
+    state.bubbles.forEach(bubble => {
+      bubble.body.velocity.x = bubble.sidewaysVelocityOffset * Math.sin((state.frame + bubble.sidewaysVelocityPhaseOffset) / 120 * Math.PI * 2)
+      if(bubble.position.y <= 0) {
+        const x = bubble.position.x
+        const y = bubble.position.y
+        bubble.destroy()
+        createDroppingCoin(x, y)
+      }
+    })
+  }
 
   function bonusCreationTimeOutPassed (currentTime, lastCreationTime) {
     return currentTime - lastCreationTime > TIME_BETWEEN_BONUS_CREATION
