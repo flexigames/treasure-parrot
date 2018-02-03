@@ -278,11 +278,23 @@ function createBubble (x, y) {
 }
 
 function addBonusGroup () {
-  for (let x = 0; x < 26; x++) {
-    for (let y = 0; y < 6; y++) {
-      addBonus(50 + x * 30, 80 + y * 30)
-    }
-  }
+  const bonusShape = [
+    [0, 0, 1, 0, 0],
+    [0, 1, 1, 1, 0],
+    [1, 1, 1, 1, 1],
+    [0, 1, 1, 1, 0],
+    [0, 0, 1, 0, 0],
+  ]
+  bonusShape.forEach((row, y) => {
+    row.forEach((shouldDisplay, x) => {
+      if (shouldDisplay) addBonus(200 + x * 25, 80 + y * 25)
+    })
+  })
+  // for (let x = 0; x < 26; x++) {
+  //   for (let y = 0; y < 6; y++) {
+  //     addBonus(50 + x * 30, 80 + y * 30)
+  //   }
+  // }
 }
 
 function addBonus (x, y) {
