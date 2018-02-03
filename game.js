@@ -58,6 +58,7 @@ phaserState.create = function create () {
 
   function createState () {
     return {
+      highscore: localStorage.getItem('highscore') || 0,
       score: 0,
       scoreLabel: createScoreLabel(),
       scoreIcon: createScoreIcon(),
@@ -68,8 +69,8 @@ phaserState.create = function create () {
       bubbles: createBubbles(),
       coins: game.add.physicsGroup(),
       backWaves: createWaves(40),
-      gameoverLabel: createGameoverLabel(),
       countdownLabel: createCountdownLabel(),
+      highscoreLabel: createHighscoreLabel(),
       gameover: false,
       frame: 0,
       lastBonusCollectionScore: 0,
@@ -92,13 +93,6 @@ phaserState.create = function create () {
       return player
     }
 
-    function createGameoverLabel () {
-      const gameoverLabel = game.add.text(game.width / 2 - 50, game.height / 2, 'Game Over')
-      gameoverLabel.visible = false
-
-      return gameoverLabel
-    }
-
     function createCountdownLabel () {
       const countdownLabel = game.add.text(
         game.width / 2 - 21,
@@ -108,6 +102,17 @@ phaserState.create = function create () {
       )
       countdownLabel.visible = false
       return countdownLabel
+    }
+
+    function createHighscoreLabel () {
+      const highscoreLabel = game.add.text(
+        game.width / 2 - 160,
+        game.height / 2 + 40,
+        'New Highscore: ',
+        {fill: '#BC2905', fontSize: '37px'}
+      )
+      highscoreLabel.visible = false
+      return highscoreLabel
     }
 
     function createWaves (bottomOffset, tint) {
@@ -160,7 +165,6 @@ phaserState.start = function start () {
   state.playerWait = 180
 
   state.gameover = false
-  state.gameoverLabel.visible = false
 
   state.countdownLabel.text = '3'
 
@@ -214,6 +218,14 @@ function handleGameover(start) {
   if (state.player.position.y > game.height - 21) state.gameover = true
   if (state.player.position.y < 32) state.gameover = true
   if (state.gameover) {
+    if (state.highscore > 0) state.highscoreLabel.visible = true
+    if (state.score > state.highscore) {
+      state.highscore = state.score
+      localStorage.setItem('highscore', state.score)
+      state.highscoreLabel.text = 'New Highscore: ' + state.highscore
+    } else {
+      state.highscoreLabel.text = 'Last Score: ' + state.score + '\n' + 'Highscore:  ' + state.highscore
+    }
     state.audio.perrot.play()
     setTimeout(function () {
       state.audio.perrot.stop()
@@ -321,7 +333,12 @@ function updateScore() {
 }
 
 function handleCountdownProcess() {
-  state.countdownLabel.visible = state.playerWait > 0
+  if (state.playerWait <= 0) {
+    state.countdownLabel.visible = false
+    state.highscoreLabel.visible = false
+  } else {
+    state.countdownLabel.visible = true
+  }
   if (state.playerWait === 170) createBubble(state.player.x, 700)
   if (state.playerWait <= 180 - 60) {
     state.countdownLabel.text = '2'
