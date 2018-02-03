@@ -123,21 +123,25 @@ phaserState.update = function update () {
     }
   })
 
-  state.droppingCoins.forEach(droppingCoin => {
-    if (Phaser.Rectangle.intersects(state.player.body, droppingCoin.body)) {
-      droppingCoinCollision(droppingCoin)
-    }
-    if (droppingCoin.position.y > game.height) {
-      droppingCoin.kill()
-    }
-  })
-
   game.physics.arcade.collide(state.bubbles, state.droppingCoins, bubbleDroppingCoinsCollision, null, state)
   game.physics.arcade.collide(state.player, state.bonuses, bonusCollision, null, state)
+
+  handleDroppingCoins()
 
   handleBubbles()
 
   handlePlayerMovement()
+
+  function handleDroppingCoins() {
+    state.droppingCoins.forEach(droppingCoin => {
+      if (Phaser.Rectangle.intersects(state.player.body, droppingCoin.body)) {
+        droppingCoinCollision(droppingCoin)
+      }
+      if (droppingCoin.position.y > game.height) {
+        droppingCoin.kill()
+      }
+    })
+  }
 
   function handleBubbles() {
     state.bubbles.forEach(bubble => {
