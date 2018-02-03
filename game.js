@@ -201,7 +201,7 @@ function createBubble (x, y) {
 }
 
 function handleGameover(start) {
-  if (state.player.position.y > 670) state.gameover = true
+  if (state.player.position.y > game.height - 21) state.gameover = true
   if (state.player.position.y < 32) state.gameover = true
   if (state.gameover) start()
 }
