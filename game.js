@@ -187,16 +187,8 @@ phaserState.update = function update () {
   }
 
   function handleCollisions() {
-    game.physics.arcade.collide(state.player, state.bubbles, bubbleCollision, null, state)
     game.physics.arcade.collide(state.scoreIcon, state.coins, coinScoreCollision, null, state)
     game.physics.arcade.collide(state.bubbles, state.droppingCoins, bubbleDroppingCoinsCollision, null, state)
-
-    function bubbleCollision (player, bubble) {
-      if (!DEBUG_PLAYER_MOVEMENT) player.body.velocity.y = -500
-      bubble.destroy()
-      state.audio.bubble.play()
-      spawnGold(bubble.position.x, bubble.position.y)
-    }
 
     function bubbleDroppingCoinsCollision(bubble, droppingCoin) {
       const bubblePosition = bubble.position
@@ -298,11 +290,22 @@ phaserState.update = function update () {
   function updateBubbles() {
     state.bubbles.forEach(bubble => {
       bubble.body.velocity.x = bubble.sidewaysVelocityOffset * Math.sin((state.frame + bubble.sidewaysVelocityPhaseOffset) / 120 * Math.PI * 2)
+      if (Phaser.Rectangle.intersects(state.player.body, bubble.body)) {
+        bubbleCollision(bubble)
+      }
+      
       if(bubble.position.y <= 0) {
         const x = bubble.position.x
         const y = bubble.position.y
         bubble.destroy()
         createDroppingCoin(x, y)
+      }
+
+      function bubbleCollision (bubble) {
+        if (!DEBUG_PLAYER_MOVEMENT) state.player.body.velocity.y = -500
+        bubble.destroy()
+        state.audio.bubble.play()
+        spawnGold(bubble.position.x, bubble.position.y)
       }
     })
 
