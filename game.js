@@ -30,9 +30,10 @@ phaserState.preload = function preload () {
   }
 
   function loadAudio() {
-    game.load.audio('coin', 'audio/coin.mp3');
-    game.load.audio('bubble', 'audio/bubble.mp3');
-    game.load.audio('water-drop', 'audio/water-drop.mp3');
+    game.load.audio('coin', 'audio/coin.mp3')
+    game.load.audio('bubble', 'audio/bubble.mp3')
+    game.load.audio('water-drop', 'audio/water-drop.mp3')
+    game.load.audio('perrot', 'audio/perrot.mp3')
   }
 }
 
@@ -74,7 +75,8 @@ phaserState.create = function create () {
       audio: {
         coin: game.add.audio('coin'),
         bubble: game.add.audio('bubble'),
-        waterDrop: game.add.audio('water-drop')
+        waterDrop: game.add.audio('water-drop'),
+        perrot: game.add.audio('perrot'),
       }
     }
 
@@ -208,7 +210,13 @@ function createBubble (x, y) {
 function handleGameover(start) {
   if (state.player.position.y > game.height - 21) state.gameover = true
   if (state.player.position.y < 32) state.gameover = true
-  if (state.gameover) start()
+  if (state.gameover) {
+    state.audio.perrot.play()
+    setTimeout(function () {
+      state.audio.perrot.stop()
+    }, 500)
+    start()
+  }
 }
 
 function incrementFrame() {
