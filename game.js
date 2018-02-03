@@ -1,4 +1,4 @@
-const TIME_BETWEEN_BONUS_CREATION = 10000
+let BONUS_CREATION_THRESHOLD = 30
 let DEBUG_PLAYER_MOVEMENT = false
 let DEBUG_MOVEMENT_SPEED = 4
 let PLAYER_ROTATION_INTENSITY = 50
@@ -71,7 +71,7 @@ phaserState.create = function create () {
       countdownLabel: createCountdownLabel(),
       gameover: false,
       frame: 0,
-      lastBonusCollectionTime: 0,
+      lastBonusCollectionScore: 0,
       audio: {
         coin: game.add.audio('coin'),
         bubble: game.add.audio('bubble'),
@@ -163,7 +163,9 @@ phaserState.start = function start () {
 
   state.countdownLabel.text = '3'
 
-  state.lastBonusCollectionTime = 0
+  state.score = 0
+
+  state.lastBonusCollectionScore = 0
 
   function removeGameObjects() {
     state.bubbles.removeAll(true)
@@ -286,7 +288,7 @@ function updateBonuses() {
     }
   })
 
-  if (state.bonuses.length < 1 && bonusCreationTimeOutPassed(game.time.time, state.lastBonusCollectionTime)) {
+  if (state.bonuses.length < 1 && bonusCreationScoreTimeOutPassed(state.score, state.lastBonusCollectionScore) && state.score > BONUS_CREATION_THRESHOLD) {
     state.bonus = addBonus()
   }
 
@@ -296,10 +298,9 @@ function updateBonuses() {
       coin.body.velocity.y = -400
       coin.body.velocity.x = (100 * Math.random()) - 50
     }
+    state.lastBonusCollectionScore = state.score
     bonus.kill()
     state.bonuses.removeAll(true)
-    state.score += 10
-    state.lastBonusCollectionTime = game.time.time
   }
 
   function addBonus () {
@@ -357,8 +358,8 @@ function updateDroppingCoins() {
   }
 }
 
-function bonusCreationTimeOutPassed (currentTime, lastCreationTime) {
-  return currentTime - lastCreationTime > TIME_BETWEEN_BONUS_CREATION
+function bonusCreationScoreTimeOutPassed (currentScore, lastBonusCollectionScore) {
+  return currentScore - lastBonusCollectionScore >= BONUS_CREATION_THRESHOLD
 }
 
 function moveWater (water, frame, phase) {
