@@ -28,6 +28,7 @@ phaserState.preload = function preload () {
   function loadAudio() {
     game.load.audio('coin', 'audio/coin.mp3');
     game.load.audio('bubble', 'audio/bubble.mp3');
+    game.load.audio('water-drop', 'audio/water-drop.mp3');
   }
 }
 
@@ -67,7 +68,8 @@ phaserState.create = function create () {
       lastBonusCollectionTime: 0,
       audio: {
         coin: game.add.audio('coin'),
-        bubble: game.add.audio('bubble')
+        bubble: game.add.audio('bubble'),
+        waterDrop: game.add.audio('water-drop')
       }
     }
 
@@ -269,6 +271,12 @@ phaserState.update = function update () {
       if (Phaser.Rectangle.intersects(state.player.body, droppingCoin.body)) {
         droppingCoinCollision(droppingCoin)
       }
+
+      if (droppingCoin.position.y > game.height - 20 && !droppingCoin.inWater) {
+        state.audio.waterDrop.play()
+        droppingCoin.inWater = true
+      }
+
       if (droppingCoin.position.y > game.height) {
         droppingCoin.kill()
       }
