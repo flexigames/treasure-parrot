@@ -121,16 +121,19 @@ phaserState.create = function create () {
     function createClouds () {
       const clouds = game.add.physicsGroup()
       createCloud(clouds, 'cloud', 0)
-      createCloud(clouds, 'cloud2', -800)
+      createCloud(clouds, 'cloud2', -1000)
     }
 
     function createCloud (clouds, sprite, startPosition) {
-      const cloud = clouds.create(startPosition - 400, 50 + 130 * Math.random(), sprite)
+      const cloud = clouds.create(startPosition - 400, 50 + 200 * Math.random(), sprite)
       cloud.alpha = 0.4
       cloud.body.velocity.x = 50
       cloud.checkWorldBounds = true
       cloud.events.onOutOfBounds.add(cloud => {
-        if (cloud.position.x > 0) cloud.position.x = startPosition * Math.random() - 400
+        if (cloud.position.x > 0) {
+          cloud.position.x = startPosition * Math.random() * 3 - 400
+          cloud.position.y = 50 + 200 * Math.random()
+        }
       })
     }
 
