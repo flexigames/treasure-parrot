@@ -24,6 +24,7 @@ phaserState.preload = function preload () {
     game.load.image('background', 'img/blue_land.png')
     game.load.image('plane', 'img/planeYellow1.png')
     game.load.image('box', 'img/boxCoin_boxed.png')
+    game.load.image('spikes', 'img/spikes.png')
   }
 
   function loadAudio() {
@@ -35,6 +36,7 @@ phaserState.preload = function preload () {
 
 phaserState.create = function create () {
   createBackground()
+  game.add.tileSprite(0, 0, game.width, 35, 'spikes')
 
   state = createState()
   state.lastBubble = createBubble()
@@ -117,14 +119,14 @@ phaserState.create = function create () {
     }
 
     function createScoreLabel () {
-      const scoreLabel = game.add.text(39, 5, '0', {'fill': '#FFCC00', fontSize: '32px'})
+      const scoreLabel = game.add.text(39, 11, '0', {'fill': '#FFCC00', fontSize: '32px'})
       scoreLabel.stroke = '#8c7001'
       scoreLabel.strokeThickness = 5
       return scoreLabel
     }
 
     function createScoreIcon () {
-      const scoreIcon = game.add.sprite(0, 6, 'hudcoin')
+      const scoreIcon = game.add.sprite(0, 12, 'hudcoin')
       game.physics.arcade.enable(scoreIcon)
       scoreIcon.body.immovable = true
       scoreIcon.width = 40
@@ -243,7 +245,7 @@ function updateBubbles() {
       bubbleCollision(bubble)
     }
 
-    if(bubble.position.y <= 0) {
+    if(bubble.position.y <= 15) {
       const x = bubble.position.x
       const y = bubble.position.y
       bubble.destroy()
