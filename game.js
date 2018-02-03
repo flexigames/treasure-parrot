@@ -17,6 +17,7 @@ phaserState.preload = function preload () {
     game.load.image('player', 'img/parrot.png')
     game.load.image('bonus', 'img/boxItem.png')
     game.load.image('bubble', 'img/bubble4.png')
+    game.load.spritesheet('bubbleWithAnimation', 'img/bubbleWithAnimation.png', 40, 40, 3, 0, 0)
     game.load.image('water', 'img/waterTop_low.png')
     game.load.image('coin', 'img/coinGold.png')
     game.load.image('hudcoin', 'img/hudCoin.png')
@@ -185,7 +186,8 @@ function createBubble (x, y) {
   const sideOffset = 80
   x = x || (Math.random() * (game.width - sideOffset * 2)) + sideOffset
   y = y || game.height
-  let newBubble = state.bubbles.create(x, y, 'bubble')
+  let newBubble = state.bubbles.create(x, y, 'bubbleWithAnimation')
+  let burstAnimation = newBubble.animations.add('burst')
   newBubble.checkWorldBounds = true
   newBubble.body.velocity.y = -40
   newBubble.width = 40
@@ -234,8 +236,34 @@ function updateGameObjects() {
   updateBubbles()
 }
 
+function updateBubbles() {
+  state.bubbles.forEachAlive(bubble => {
+    bubble.body.velocity.x = bubble.sidewaysVelocityOffset * Math.sin((state.frame + bubble.sidewaysVelocityPhaseOffset) / 120 * Math.PI * 2)
+    if (!bubble.isPopped && Phaser.Rectangle.intersects(state.player.body, bubble.body)) {
+      bubbleCollision(bubble)
+    }
+
+    if(bubble.position.y <= 0) {
+      const x = bubble.position.x
+      const y = bubble.position.y
+      bubble.destroy()
+      createDroppingCoin(x, y)
+    }
+
+    function bubbleCollision (bubble) {
+      if (!DEBUG_PLAYER_MOVEMENT) state.player.body.velocity.y = -500
+      bubble.animations.play('burst', 40, false, true)
+      bubble.isPopped = true
+      state.audio.bubble.play()
+      spawnGold(bubble.position.x, bubble.position.y)
+    }
+  })
+
+  if (!state.lastBubble.alive || state.lastBubble.y < 660) { state.lastBubble = createBubble() }
+}
+
 function updateBonuses() {
-  state.bonuses.forEach(bonus => {
+  state.bonuses.forEachAlive(bonus => {
     if (Phaser.Rectangle.intersects(state.player.body, bonus.body)) {
       bonusCollision(bonus)
     }
@@ -305,31 +333,6 @@ function updateDroppingCoins() {
     state.audio.coin.play()
     coin.destroy()
   }
-}
-
-function updateBubbles() {
-  state.bubbles.forEach(bubble => {
-    bubble.body.velocity.x = bubble.sidewaysVelocityOffset * Math.sin((state.frame + bubble.sidewaysVelocityPhaseOffset) / 120 * Math.PI * 2)
-    if (Phaser.Rectangle.intersects(state.player.body, bubble.body)) {
-      bubbleCollision(bubble)
-    }
-
-    if(bubble.position.y <= 0) {
-      const x = bubble.position.x
-      const y = bubble.position.y
-      bubble.destroy()
-      createDroppingCoin(x, y)
-    }
-
-    function bubbleCollision (bubble) {
-      if (!DEBUG_PLAYER_MOVEMENT) state.player.body.velocity.y = -500
-      bubble.destroy()
-      state.audio.bubble.play()
-      spawnGold(bubble.position.x, bubble.position.y)
-    }
-  })
-
-  if (!state.lastBubble.alive || state.lastBubble.y < 660) { state.lastBubble = createBubble() }
 }
 
 function bonusCreationTimeOutPassed (currentTime, lastCreationTime) {
