@@ -7,93 +7,6 @@ let game = new Phaser.Game(900, 700, Phaser.AUTO, 'game-div')
 let state
 let cursor
 
-function createState () {
-  return {
-    score: 0,
-    scoreLabel: createScoreLabel(),
-    scoreIcon: createScoreIcon(),
-    frontWaves: createWaves(60, 0xeeeeee),
-    droppingCoins: game.add.physicsGroup(),
-    player: createPlayer(),
-    bonuses: game.add.physicsGroup(),
-    bubbles: createBubbles(),
-    coins: game.add.physicsGroup(),
-    backWaves: createWaves(40),
-    gameoverLabel: createGameoverLabel(),
-    countdownLabel: createCountdownLabel(),
-    gameover: false,
-    frame: 0,
-    lastBonusCollectionTime: 0,
-    audio: {
-      coin: game.add.audio('coin'),
-      bubble: game.add.audio('bubble')
-    }
-  }
-
-  function createPlayer () {
-    const player = game.add.sprite(350, 350, 'player')
-    game.physics.arcade.enable(player)
-    player.body.collideWorldBounds = true
-    player.anchor.setTo(0.5, 0.5)
-    player.width = 40
-    player.height = 40
-    return player
-  }
-
-  function createGameoverLabel () {
-    const gameoverLabel = game.add.text(game.width / 2 - 50, game.height / 2, 'Game Over')
-    gameoverLabel.visible = false
-
-    return gameoverLabel
-  }
-
-  function createCountdownLabel () {
-    const countdownLabel = game.add.text(
-      game.width / 2 - 21,
-      game.height / 2 - 100,
-      '3',
-      {fill: '#BC2905', fontSize: '60px'}
-    )
-    countdownLabel.visible = false
-    return countdownLabel
-  }
-
-  function createWaves (bottomOffset, tint) {
-    const tileWidth = 40
-    const waterGroup = game.add.physicsGroup()
-    const numberOfTiles = Math.ceil(game.width / tileWidth) + 1
-    for (let i = -2; i < numberOfTiles; i++) {
-      let waveTile = waterGroup.create(i * tileWidth, 700 - bottomOffset, 'water')
-      waveTile.width = tileWidth
-      waveTile.height = 40
-      waveTile.body.immovable = true
-      if (tint) waveTile.tint = tint
-    }
-    return waterGroup
-  }
-
-  function createScoreLabel () {
-    const scoreLabel = game.add.text(39, 5, '0', {'fill': '#FFCC00', fontSize: '32px'})
-    scoreLabel.stroke = '#8c7001'
-    scoreLabel.strokeThickness = 5
-    return scoreLabel
-  }
-
-  function createScoreIcon () {
-    const scoreIcon = game.add.sprite(0, 6, 'hudcoin')
-    game.physics.arcade.enable(scoreIcon)
-    scoreIcon.body.immovable = true
-    scoreIcon.width = 40
-    scoreIcon.height = 40
-    return scoreIcon
-  }
-
-  function createBubbles () {
-    const bubbles = game.add.physicsGroup()
-    return bubbles
-  }
-}
-
 let phaserState = new Phaser.State()
 
 phaserState.preload = function preload () {
@@ -133,6 +46,93 @@ phaserState.create = function create () {
   function createBackground () {
     game.stage.backgroundColor = '#3498db'
     game.add.tileSprite(0, -30, 1024, 1024, 'background')
+  }
+
+  function createState () {
+    return {
+      score: 0,
+      scoreLabel: createScoreLabel(),
+      scoreIcon: createScoreIcon(),
+      frontWaves: createWaves(60, 0xeeeeee),
+      droppingCoins: game.add.physicsGroup(),
+      player: createPlayer(),
+      bonuses: game.add.physicsGroup(),
+      bubbles: createBubbles(),
+      coins: game.add.physicsGroup(),
+      backWaves: createWaves(40),
+      gameoverLabel: createGameoverLabel(),
+      countdownLabel: createCountdownLabel(),
+      gameover: false,
+      frame: 0,
+      lastBonusCollectionTime: 0,
+      audio: {
+        coin: game.add.audio('coin'),
+        bubble: game.add.audio('bubble')
+      }
+    }
+
+    function createPlayer () {
+      const player = game.add.sprite(350, 350, 'player')
+      game.physics.arcade.enable(player)
+      player.body.collideWorldBounds = true
+      player.anchor.setTo(0.5, 0.5)
+      player.width = 40
+      player.height = 40
+      return player
+    }
+
+    function createGameoverLabel () {
+      const gameoverLabel = game.add.text(game.width / 2 - 50, game.height / 2, 'Game Over')
+      gameoverLabel.visible = false
+
+      return gameoverLabel
+    }
+
+    function createCountdownLabel () {
+      const countdownLabel = game.add.text(
+        game.width / 2 - 21,
+        game.height / 2 - 100,
+        '3',
+        {fill: '#BC2905', fontSize: '60px'}
+      )
+      countdownLabel.visible = false
+      return countdownLabel
+    }
+
+    function createWaves (bottomOffset, tint) {
+      const tileWidth = 40
+      const waterGroup = game.add.physicsGroup()
+      const numberOfTiles = Math.ceil(game.width / tileWidth) + 1
+      for (let i = -2; i < numberOfTiles; i++) {
+        let waveTile = waterGroup.create(i * tileWidth, 700 - bottomOffset, 'water')
+        waveTile.width = tileWidth
+        waveTile.height = 40
+        waveTile.body.immovable = true
+        if (tint) waveTile.tint = tint
+      }
+      return waterGroup
+    }
+
+    function createScoreLabel () {
+      const scoreLabel = game.add.text(39, 5, '0', {'fill': '#FFCC00', fontSize: '32px'})
+      scoreLabel.stroke = '#8c7001'
+      scoreLabel.strokeThickness = 5
+      return scoreLabel
+    }
+
+    function createScoreIcon () {
+      const scoreIcon = game.add.sprite(0, 6, 'hudcoin')
+      game.physics.arcade.enable(scoreIcon)
+      scoreIcon.body.immovable = true
+      scoreIcon.width = 40
+      scoreIcon.height = 40
+      return scoreIcon
+    }
+
+    function createBubbles () {
+      const bubbles = game.add.physicsGroup()
+      return bubbles
+    }
   }
 }
 
