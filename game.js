@@ -428,9 +428,9 @@ function handlePlayerMovement() {
       state.player.body.velocity.x = 0
       state.player.body.velocity.y = 0
     } else {
-      if (cursor.left.isDown) {
+      if (cursor.left.isDown || (game.input.pointer1.worldX <= game.width/2 &&  game.input.pointer1.isDown)) {
         state.player.body.velocity.x -= (state.player.body.velocity.x + 400) / 15
-      } else if (cursor.right.isDown) {
+      } else if (cursor.right.isDown || (game.input.pointer1.worldX > game.width/2 &&  game.input.pointer1.isDown)) {
         state.player.body.velocity.x += (400 - state.player.body.velocity.x) / 15
       } else {
         state.player.body.velocity.x /= 1.02
