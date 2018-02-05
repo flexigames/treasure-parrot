@@ -403,8 +403,9 @@ function bonusCreationScoreTimeOutPassed (currentScore, lastBonusCollectionScore
 }
 
 function moveWater (water, frame, phase) {
+  const waveDeltaX = Math.sin((frame + phase) / 120 * Math.PI * 2)
   water.forEach(function (wave) {
-    wave.x += Math.sin((frame + phase) / 120 * Math.PI * 2)
+    wave.x += waveDeltaX
   })
 }
 
