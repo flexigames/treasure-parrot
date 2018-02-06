@@ -5,7 +5,7 @@ let PLAYER_ROTATION_INTENSITY = 50
 let PLAYER_ROTATION_REDUCTION = 1.002
 let DIFFICULTY_PROGRESSION_START_SCORE = 40
 
-let game = new Phaser.Game(900, 700, Phaser.AUTO, 'game-div')
+let game = new Phaser.Game(window.innerWidth, 700, Phaser.AUTO, 'game-div')
 
 let state
 let cursor
@@ -55,7 +55,7 @@ phaserState.create = function create () {
 
   function createBackground () {
     game.stage.backgroundColor = '#3498db'
-    game.add.tileSprite(0, -30, 1024, 1024, 'background')
+    game.add.tileSprite(0, -30, game.width, 1024, 'background')
   }
 
   function createState () {
