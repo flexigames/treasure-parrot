@@ -24,7 +24,7 @@ phaserState.preload = function preload () {
     game.load.image('water', 'img/waterTop_low.png')
     game.load.image('coin', 'img/coinGold.png')
     game.load.image('hudcoin', 'img/hudCoin.png')
-    game.load.image('background', 'img/blue_land.png')
+    game.load.image('background', 'img/background.png')
     game.load.image('plane', 'img/planeYellow1.png')
     game.load.image('box', 'img/boxCoin_boxed.png')
     game.load.image('spikes', 'img/spikes.png')
