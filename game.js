@@ -25,7 +25,7 @@ phaserState.preload = function preload () {
     game.load.image('coin', 'img/coinGold.png')
     game.load.image('hudcoin', 'img/hudCoin.png')
     game.load.image('background', 'img/background.png')
-    game.load.image('plane', 'img/planeYellow1.png')
+    game.load.image('plane', 'img/monoPlane2.png')
     game.load.image('box', 'img/boxCoin_boxed.png')
     game.load.image('spikes', 'img/spikes.png')
     game.load.image('cloud', 'img/cloud6.png')
@@ -61,6 +61,7 @@ phaserState.create = function create () {
   function createState () {
     return {
       clouds: createClouds(),
+      planes: createPlanes(),
       highscore: localStorage.getItem('highscore') || 0,
       score: 0,
       scoreLabel: createScoreLabel(),
@@ -134,6 +135,25 @@ phaserState.create = function create () {
         if (cloud.position.x > 0) {
           cloud.position.x = startPosition * Math.random() * 3 - 400
           cloud.position.y = 50 + 200 * Math.random()
+        }
+      })
+    }
+
+    function createPlanes() {
+      const planes = game.add.physicsGroup()
+      createPlane(planes, 0)
+      return planes
+    }
+
+    function createPlane(planes, startPosition) {
+      const plane = planes.create(startPosition, 100, 'plane')
+      plane.body.velocity.x = 100
+      plane.width = 22
+      plane.height = 18
+      plane.checkWorldBounds = true
+      plane.events.onOutOfBounds.add(plane => {
+        if (plane.position.x > 0) {
+          plane.position.x =  startPosition - Math.random() * 1000 - 400
         }
       })
     }
