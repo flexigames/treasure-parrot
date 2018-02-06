@@ -5,7 +5,7 @@ let PLAYER_ROTATION_INTENSITY = 50
 let PLAYER_ROTATION_REDUCTION = 1.002
 let DIFFICULTY_PROGRESSION_START_SCORE = 40
 
-let game = new Phaser.Game(window.innerWidth, 700, Phaser.AUTO, 'game-div')
+let game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, 'game-div')
 
 let state
 let cursor
@@ -143,7 +143,7 @@ phaserState.create = function create () {
       const waterGroup = game.add.physicsGroup()
       const numberOfTiles = Math.ceil(game.width / tileWidth) + 1
       for (let i = -2; i < numberOfTiles; i++) {
-        let waveTile = waterGroup.create(i * tileWidth, 700 - bottomOffset, 'water')
+        let waveTile = waterGroup.create(i * tileWidth, game.height - bottomOffset, 'water')
         waveTile.width = tileWidth
         waveTile.height = 40
         waveTile.body.immovable = true
@@ -314,7 +314,7 @@ function updateBubbles() {
     }
   })
 
-  if (!state.lastBubble.alive || state.lastBubble.y < 660) { state.lastBubble = createBubble() }
+  if (!state.lastBubble.alive || state.lastBubble.y < game.height - 60) { state.lastBubble = createBubble() }
 }
 
 function updateBonuses() {
