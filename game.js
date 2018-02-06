@@ -362,7 +362,7 @@ function handleCountdownProcess() {
   } else {
     state.countdownLabel.visible = true
   }
-  if (state.playerWait === 170) createBubble(state.player.x, 700)
+  if (state.playerWait === 170) createBubble(state.player.x, game.height)
   if (state.playerWait <= 180 - 60) {
     state.countdownLabel.text = '2'
   }
