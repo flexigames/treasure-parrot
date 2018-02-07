@@ -314,7 +314,7 @@ function updateBubbles() {
     }
   })
 
-  if (!state.lastBubble.alive || state.lastBubble.y < game.height - 60) { state.lastBubble = createBubble() }
+  if (!state.lastBubble.alive || state.lastBubble.y < game.height - 40) { state.lastBubble = createBubble() }
 }
 
 function updateBonuses() {
