@@ -47,6 +47,11 @@ phaserState.create = function create () {
   state = createState()
   state.lastBubble = createBubble()
 
+  state.circle = game.add.graphics(0, 0) 
+  state.circle.lineStyle(2, 0xff0000, 1)
+  state.circle.drawCircle(0,0,50)
+   
+
   cursor = game.input.keyboard.createCursorKeys()
 
   game.physics.startSystem(Phaser.Physics.ARCADE)
@@ -77,6 +82,7 @@ phaserState.create = function create () {
       highscoreLabel: createHighscoreLabel(),
       gameover: false,
       frame: 0,
+      lastBubbleCollissions: [],
       lastBonusCollectionScore: 0,
       audio: {
         coin: game.add.audio('coin'),
@@ -223,8 +229,20 @@ phaserState.start = function start () {
   }
 }
 
+let lastCollisionFrame = 0
+
 phaserState.update = function update () {
   handleGameover(this.start)
+
+  state.circle.clear()
+  if(state.lastBubbleCollissions.length > 2 && state.lastBubbleCollissions[0].frame - state.lastBubbleCollissions[1].frame < 20) {
+    state.circle.position.x = state.lastBubbleCollissions[0].x
+    state.circle.position.y = state.lastBubbleCollissions[0].y
+    lastCollisionFrame = state.lastBubbleCollissions[0].frame
+    
+  }
+  state.circle.lineStyle(2, 0xccccff, 1)
+  if(lastCollisionFrame !== 0) state.circle.drawCircle(0,0,20 + 60*(state.frame - lastCollisionFrame))
 
   incrementFrame()
 
@@ -247,6 +265,7 @@ function createBubble (x, y) {
   y = y || game.height
   let newBubble = state.bubbles.create(x, y, 'bubbleWithAnimation')
   let burstAnimation = newBubble.animations.add('burst')
+  newBubble.anchor.setTo(0.5, 0.5)  
   newBubble.checkWorldBounds = true
   newBubble.body.velocity.y = -42
   newBubble.width = 40
@@ -279,7 +298,6 @@ function handleGameover(start) {
 
 function incrementFrame() {
   state.frame++
-  if (state.frame > 120) state.frame = 0
 }
 
 function handleCollisions() {
@@ -315,7 +333,7 @@ function updateGameObjects() {
 
 function updateBubbles() {
   state.bubbles.forEachAlive(bubble => {
-    bubble.body.velocity.x = bubble.sidewaysVelocityOffset * Math.sin((state.frame + bubble.sidewaysVelocityPhaseOffset) / 120 * Math.PI * 2)
+    bubble.body.velocity.x = bubble.sidewaysVelocityOffset * Math.sin((state.frame % 120 + bubble.sidewaysVelocityPhaseOffset) / 120 * Math.PI * 2)
     if (!bubble.isPopped && Phaser.Rectangle.intersects(state.player.body, bubble.body)) {
       state.player.customRotation += state.player.body.velocity.x / PLAYER_ROTATION_INTENSITY
       bubbleCollision(bubble)
@@ -330,6 +348,12 @@ function updateBubbles() {
     }
 
     function bubbleCollision (bubble) {
+      state.lastBubbleCollissions.unshift({
+        frame: state.frame,
+        x: bubble.position.x,
+        y: bubble.position.y
+      })
+
       if (!DEBUG_PLAYER_MOVEMENT) state.player.body.velocity.y = -500
       bubble.animations.play('burst', 40, false, true)
       bubble.isPopped = true
@@ -428,7 +452,7 @@ function bonusCreationScoreTimeOutPassed (currentScore, lastBonusCollectionScore
 }
 
 function moveWater (water, frame, phase) {
-  const waveDeltaX = Math.sin((frame + phase) / 120 * Math.PI * 2)
+  const waveDeltaX = Math.sin((frame % 120 + phase) / 120 * Math.PI * 2)
   water.forEach(function (wave) {
     wave.x += waveDeltaX
   })
