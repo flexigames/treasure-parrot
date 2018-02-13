@@ -121,7 +121,7 @@ phaserState.create = function create () {
 
     function createClouds () {
       const clouds = game.add.physicsGroup()
-      createCloud(clouds, 'cloud', 25, 0, 0.5)
+      createCloud(clouds, 'cloud', 15, 0, 0.5)
       createCloud(clouds, 'cloud2', 32, -1000, 0.75)
       return clouds
     }
