@@ -287,10 +287,13 @@ function handleCollisions() {
   game.physics.arcade.collide(state.bubbles, state.droppingCoins, bubbleDroppingCoinsCollision, null, state)
 
   function bubbleDroppingCoinsCollision(bubble, droppingCoin) {
-    const bubblePosition = bubble.position
-    state.audio.bubble.play()
-    bubble.kill()
-    createDroppingCoin(bubblePosition.x, bubblePosition.y)
+    if (!bubble.isPopped) {
+      const bubblePosition = bubble.position
+      bubble.animations.play('burst', 40, false, true)
+      state.audio.bubble.play()
+      bubble.isPopped = true
+      createDroppingCoin(bubblePosition.x, bubblePosition.y)
+    }
   }
 
   function coinScoreCollision (hudCoin, coin) {
@@ -318,10 +321,11 @@ function updateBubbles() {
       bubbleCollision(bubble)
     }
 
-    if(bubble.position.y <= 15) {
+    if(!bubble.isPopped && bubble.position.y <= 15) {
       const x = bubble.position.x
       const y = bubble.position.y
-      bubble.destroy()
+      bubble.animations.play('burst', 40, false, true)
+      bubble.isPopped = true
       createDroppingCoin(x, y)
     }
 
