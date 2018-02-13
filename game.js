@@ -235,7 +235,7 @@ phaserState.update = function update () {
   handleGameover(this.start)
 
   state.circle.clear()
-  if(state.lastBubbleCollissions.length > 2 && state.lastBubbleCollissions[0].frame - state.lastBubbleCollissions[1].frame < 20) {
+  if(state.lastBubbleCollissions.length > 2 && state.lastBubbleCollissions[0].frame - state.lastBubbleCollissions[1].frame < 10) {
     state.circle.position.x = state.lastBubbleCollissions[0].x
     state.circle.position.y = state.lastBubbleCollissions[0].y
     lastCollisionFrame = state.lastBubbleCollissions[0].frame
